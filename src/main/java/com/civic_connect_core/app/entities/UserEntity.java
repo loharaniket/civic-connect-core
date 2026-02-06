@@ -1,4 +1,4 @@
-package com.civic_connect_core.app.entity;
+package com.civic_connect_core.app.entities;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user_detail")
+@Table(name = "user")
 public class UserEntity {
     @Id
     @Column(name = "user_id")
