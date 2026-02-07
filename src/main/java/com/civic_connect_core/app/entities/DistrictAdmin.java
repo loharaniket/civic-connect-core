@@ -6,16 +6,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity 
+@Entity
+@AllArgsConstructor
+@NoArgsConstructor
 @Data
-@Table(name = "district")
-public class DistrictEntity {
+@Builder
+@Table(name = "dist_admin")
+public class DistrictAdmin {
     @Id
     @Column(name = "dist_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String distName;
     private String distState;
+    private String adminName;
+    private String adminSurname;
+    private String adminEmail;
+    private String adminPassword;
 }
