@@ -1,5 +1,7 @@
 package com.civic_connect_core.app.entities;
 
+import java.time.LocalDateTime;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,16 +12,15 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "user")
-public class UserEntity {
+@Table(name = "issue")
+public class IssueEntity {
     @Id
-    @Column(name = "user_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "issue_id")
     private Long id;
-    private String name;
-    private String mid_name;
-    private String surname;
-    private String email;
-    private String password;
-    private Long dist_id;
+    private Long userId;
+    private LocalDateTime date;
+    private Long deptId;
+    private String status;
+    private Long distId;
 }
