@@ -1,14 +1,9 @@
-package com.civic_connect_core.app.dtos;
+package com.civic_connect_core.app.dtos.dist_admin_dtos;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
-@AllArgsConstructor
-@Getter
 @Data
-public class DistAdminRegResDTO {
-    private Long id;
+public class DistAdminRegReqDTO {
     private String distName;
     private String distState;
     private String adminName;

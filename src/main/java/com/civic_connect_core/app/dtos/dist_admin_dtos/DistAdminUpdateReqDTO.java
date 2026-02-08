@@ -1,4 +1,4 @@
-package com.civic_connect_core.app.dtos;
+package com.civic_connect_core.app.dtos.dist_admin_dtos;
 
 import lombok.Data;
 

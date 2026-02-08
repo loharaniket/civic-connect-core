@@ -12,9 +12,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.civic_connect_core.app.dtos.DistAdminRegReqDTO;
-import com.civic_connect_core.app.dtos.DistAdminRegResDTO;
-import com.civic_connect_core.app.dtos.DistAdminUpdateReqDTO;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegReqDTO;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegResDTO;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminUpdateReqDTO;
 import com.civic_connect_core.app.entities.DistrictAdmin;
 import com.civic_connect_core.app.mapper.DistAdminMapper;
 import com.civic_connect_core.app.repository.DistAdminRepo;
@@ -30,12 +30,14 @@ public class DistAdminController {
     @Autowired
     private final DistAdminRepo repository;
 
+    //get all district admin list
     @GetMapping
     public List<DistAdminRegResDTO> getAllAdmins() {
         List<DistrictAdmin> admins = repository.findAll();
         return admins.stream().map(admin -> distMapper.tRegResDTO(admin)).toList();
     }
 
+    // create new district admin
     @PostMapping
     public ResponseEntity<DistAdminRegResDTO> addDistAdmin(@RequestBody DistAdminRegReqDTO request) {
         if (request != null) {
@@ -47,6 +49,7 @@ public class DistAdminController {
         return ResponseEntity.badRequest().build();
     }
 
+    // update district admin account information
     @PutMapping("/{id}")
     public ResponseEntity<DistAdminRegResDTO> udpateDistAdmin(@RequestBody DistAdminUpdateReqDTO request, @PathVariable Long id) {
         if (request != null) {

@@ -9,15 +9,15 @@ import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "dist_admin")
-public class DistrictAdmin {
+@Table(name = "dept_admin")
+public class DepartmentAdmin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private String distName;
-    private String distState;
-    private String adminName;
-    private String adminSurname;
-    private String adminEmail;
-    private String adminPassword;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
+    private Long distAdminId;
+    private Long deptId;
 }

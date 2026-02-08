@@ -1,0 +1,9 @@
+api/dept/admin ->
+{
+    "firstName":"Raj",
+    "lastName":"Jadhav",
+    "email":"jadhavraj@gmail.com",
+    "password":"12345",
+    "distAdminId":1,
+    "deptId":1
+}

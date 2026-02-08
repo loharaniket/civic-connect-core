@@ -5,9 +5,9 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 
-import com.civic_connect_core.app.dtos.DistAdminRegReqDTO;
-import com.civic_connect_core.app.dtos.DistAdminRegResDTO;
-import com.civic_connect_core.app.dtos.DistAdminUpdateReqDTO;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegReqDTO;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegResDTO;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminUpdateReqDTO;
 import com.civic_connect_core.app.entities.DistrictAdmin;
 
 @Mapper(componentModel = "spring")
