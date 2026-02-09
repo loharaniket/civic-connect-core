@@ -7,3 +7,9 @@ api/dept/admin ->
     "distAdminId":1,
     "deptId":1
 }
+
+api/dept/ ->
+{
+    "dept_name":"Light Dept",
+    "dist_admin_id":1
+}
