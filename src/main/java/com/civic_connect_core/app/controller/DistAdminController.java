@@ -1,9 +1,13 @@
 package com.civic_connect_core.app.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +23,7 @@ import com.civic_connect_core.app.entities.DistrictAdmin;
 import com.civic_connect_core.app.mapper.DistAdminMapper;
 import com.civic_connect_core.app.repository.DistAdminRepo;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -39,7 +44,7 @@ public class DistAdminController {
 
     // create new district admin
     @PostMapping
-    public ResponseEntity<DistAdminRegResDTO> addDistAdmin(@RequestBody DistAdminRegReqDTO request) {
+    public ResponseEntity<DistAdminRegResDTO> addDistAdmin(@Valid @RequestBody DistAdminRegReqDTO request) {
         if (request != null) {
             var newAdmin = distMapper.toDistrictAdmin(request);
             repository.save(newAdmin);
@@ -51,7 +56,8 @@ public class DistAdminController {
 
     // update district admin account information
     @PutMapping("/{id}")
-    public ResponseEntity<DistAdminRegResDTO> udpateDistAdmin(@RequestBody DistAdminUpdateReqDTO request, @PathVariable Long id) {
+    public ResponseEntity<DistAdminRegResDTO> udpateDistAdmin(@RequestBody DistAdminUpdateReqDTO request,
+            @PathVariable Long id) {
         if (request != null) {
             var admin = repository.findById(id).orElseThrow(() -> new RuntimeException());
             distMapper.updateDistAdminProfile(request, admin);
@@ -60,5 +66,14 @@ public class DistAdminController {
             return ResponseEntity.ok(res);
         }
         return ResponseEntity.badRequest().build();
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, String>> handleExceptionErrors(MethodArgumentNotValidException exception) {
+        Map<String, String> errors = new HashMap<>();
+        exception.getBindingResult().getFieldErrors().forEach(error ->
+            errors.put(error.getField(), error.getDefaultMessage())
+        );
+        return ResponseEntity.badRequest().body(errors);
     }
 }
