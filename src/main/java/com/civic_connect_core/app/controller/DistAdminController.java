@@ -68,12 +68,12 @@ public class DistAdminController {
         return ResponseEntity.badRequest().build();
     }
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, String>> handleExceptionErrors(MethodArgumentNotValidException exception) {
-        Map<String, String> errors = new HashMap<>();
-        exception.getBindingResult().getFieldErrors().forEach(error ->
-            errors.put(error.getField(), error.getDefaultMessage())
-        );
-        return ResponseEntity.badRequest().body(errors);
-    }
+    // @ExceptionHandler(MethodArgumentNotValidException.class)
+    // public ResponseEntity<Map<String, String>> handleExceptionErrors(MethodArgumentNotValidException exception) {
+    //     Map<String, String> errors = new HashMap<>();
+    //     exception.getBindingResult().getFieldErrors().forEach(error ->
+    //         errors.put(error.getField(), error.getDefaultMessage())
+    //     );
+    //     return ResponseEntity.badRequest().body(errors);
+    // }
 }

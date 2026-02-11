@@ -1,5 +1,7 @@
 package com.civic_connect_core.app.dtos.dept_admin_dtos;
 
+import com.civic_connect_core.app.validation.email_validation.EmailDomainValidation;
+import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;
@@ -18,6 +20,7 @@ public class DeptAdminReqDTO {
     private String lastName;
 
     @NotBlank(message = "email is required")
+    @EmailDomainValidation
     @Email(message = "email must be valid")
     @JsonProperty("email")
     private String email;
@@ -27,11 +30,11 @@ public class DeptAdminReqDTO {
     @JsonProperty("password")
     private String password;
 
-    @NotBlank(message = "district id is required")
+    // @NotBlank(message = "district id is required")
     @JsonProperty("dist_admin_id")
     private Long distAdminId;
 
-    @NotBlank(message = "department id is required")
+    // @NotBlank(message = "department id is required")
     @JsonProperty("dept_id")
     private Long deptId;
 }

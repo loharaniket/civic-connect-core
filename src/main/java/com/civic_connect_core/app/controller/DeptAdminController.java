@@ -19,6 +19,7 @@ import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminUpdateReq;
 import com.civic_connect_core.app.mapper.DeptAdminMapper;
 import com.civic_connect_core.app.repository.DeptAdminRepo;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -52,7 +53,7 @@ public class DeptAdminController {
 
     // only dist admin create new dept admin and assign department
     @PostMapping
-    public ResponseEntity<DeptAdminResDTO> newDeptAdmin(@RequestBody DeptAdminReqDTO request) {
+    public ResponseEntity<DeptAdminResDTO> newDeptAdmin(@Valid @RequestBody DeptAdminReqDTO request) {
         if (request != null) {
             var admin = deptAdminMappper.tDepartmentAdmin(request);
             deptRepo.save(admin);
