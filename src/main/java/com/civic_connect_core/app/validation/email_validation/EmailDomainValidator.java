@@ -10,12 +10,14 @@ import jakarta.validation.ConstraintValidatorContext;
 public class EmailDomainValidator implements ConstraintValidator<EmailDomainValidation, String> {
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
-        if (value.isBlank())
+    public boolean isValid(String email, ConstraintValidatorContext context) {
+        if (!email.isBlank())
             return true;
-        List<String> validEmails = new ArrayList<>(Arrays.asList("gmail.com"));
-        if (validEmails.contains(value.split("@")[1])) {
-            return true;
+        List<String> validEmails = new ArrayList<>(
+                Arrays.asList("gmail.com", "outlook.com", "yahoo.com", "icloud.com"));
+        for (String domain : validEmails) {
+            if (email.endsWith(domain))
+                return true;
         }
         return false;
     }

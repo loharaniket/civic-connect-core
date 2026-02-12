@@ -1,5 +1,8 @@
 package com.civic_connect_core.app.dtos.dist_admin_dtos;
 
+import com.civic_connect_core.app.validation.dist_validation.DistAlreadyExistValidation;
+import com.civic_connect_core.app.validation.dist_validation.EmailExistDistValidation;
+import com.civic_connect_core.app.validation.email_validation.EmailDomainValidation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;
@@ -10,7 +13,8 @@ import lombok.Data;
 @Data
 public class DistAdminRegReqDTO {
     @NotBlank(message = "district name cannot be blank")
-    @Size(min = 3 , message = "district name length should greater than 3")
+    @Size(min = 3, message = "district name length should greater than 3")
+    @DistAlreadyExistValidation
     @JsonProperty("dist_name")
     private String distName;
 
@@ -28,6 +32,8 @@ public class DistAdminRegReqDTO {
     
     @NotBlank(message = "email is required")
     @Email(message = "email must be valid")
+    @EmailDomainValidation
+    @EmailExistDistValidation
     @JsonProperty("admin_email")
     private String adminEmail;
     
