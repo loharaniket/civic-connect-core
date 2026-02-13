@@ -11,7 +11,7 @@ public class EmailDomainValidator implements ConstraintValidator<EmailDomainVali
 
     @Override
     public boolean isValid(String email, ConstraintValidatorContext context) {
-        if (!email.isBlank())
+        if (email == null || email.isBlank())
             return true;
         List<String> validEmails = new ArrayList<>(
                 Arrays.asList("gmail.com", "outlook.com", "yahoo.com", "icloud.com"));

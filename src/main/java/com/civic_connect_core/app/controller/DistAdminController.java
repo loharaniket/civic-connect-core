@@ -1,13 +1,15 @@
 package com.civic_connect_core.app.controller;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminLoginReq;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegReqDTO;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegResDTO;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminUpdateReqDTO;
@@ -31,11 +34,14 @@ import lombok.AllArgsConstructor;
 @RequestMapping("api/dist/admin")
 public class DistAdminController {
     private final DistAdminMapper distMapper;
-    
-    @Autowired
+
     private final DistAdminRepo repository;
 
-    //get all district admin list
+    private final PasswordEncoder passwordEncoder;
+
+    private final AuthenticationManager authenticationManager;
+
+    // get all district admin list
     @GetMapping
     public List<DistAdminRegResDTO> getAllAdmins() {
         List<DistrictAdmin> admins = repository.findAll();
@@ -44,14 +50,22 @@ public class DistAdminController {
 
     // create new district admin
     @PostMapping
-    public ResponseEntity<DistAdminRegResDTO> addDistAdmin(@Valid @RequestBody DistAdminRegReqDTO request) {
-        if (request != null) {
-            var newAdmin = distMapper.toDistrictAdmin(request);
-            repository.save(newAdmin);
-            var res = distMapper.tRegResDTO(newAdmin);
-            return ResponseEntity.ok(res);
+    public ResponseEntity<?> addDistAdmin(@Valid @RequestBody DistAdminRegReqDTO request) {
+        if (repository.existsByAdminEmail(request.getAdminEmail())) {
+            // {"Email":"Email Already Exist"}
+            return ResponseEntity.badRequest().body(Map.of("Email", "Email Already Exist"));
         }
-        return ResponseEntity.badRequest().build();
+        var newAdmin = distMapper.toDistrictAdmin(request);
+        newAdmin.setAdminPassword(passwordEncoder.encode(newAdmin.getAdminPassword()));
+        repository.save(newAdmin);
+        return ResponseEntity.ok(distMapper.tRegResDTO(newAdmin));
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginDistAdmin(@Valid @RequestBody DistAdminLoginReq request) {
+        authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        return ResponseEntity.ok().build();
     }
 
     // update district admin account information
@@ -67,13 +81,4 @@ public class DistAdminController {
         }
         return ResponseEntity.badRequest().build();
     }
-
-    // @ExceptionHandler(MethodArgumentNotValidException.class)
-    // public ResponseEntity<Map<String, String>> handleExceptionErrors(MethodArgumentNotValidException exception) {
-    //     Map<String, String> errors = new HashMap<>();
-    //     exception.getBindingResult().getFieldErrors().forEach(error ->
-    //         errors.put(error.getField(), error.getDefaultMessage())
-    //     );
-    //     return ResponseEntity.badRequest().body(errors);
-    // }
 }

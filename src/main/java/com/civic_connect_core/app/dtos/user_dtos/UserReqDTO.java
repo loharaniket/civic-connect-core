@@ -29,7 +29,6 @@ public class UserReqDTO {
     @JsonProperty("password")
     private String password;
     
-    @NotBlank(message = "dist id is required")
     @JsonProperty("dist_id")
     private Long distId;
 }

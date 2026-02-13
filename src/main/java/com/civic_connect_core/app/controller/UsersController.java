@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,6 +20,7 @@ import com.civic_connect_core.app.dtos.user_dtos.UserUpdateDTO;
 import com.civic_connect_core.app.mapper.UsersMapper;
 import com.civic_connect_core.app.repository.UsersRepo;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -29,6 +31,9 @@ public class UsersController {
     @Autowired
     private final UsersRepo userRepo;
 
+    @Autowired
+    private final PasswordEncoder passwordEncoder;
+
     @GetMapping("/{user_id}")
     public ResponseEntity<UserResDTO> getUser(@PathVariable Long user_id) {
         if (user_id <= 0)
@@ -38,10 +43,11 @@ public class UsersController {
     }
 
     @PostMapping
-    public ResponseEntity<UserResDTO> addUser(@RequestBody UserReqDTO request) {
+    public ResponseEntity<UserResDTO> addUser(@Valid @RequestBody UserReqDTO request) {
         if (request == null)
             return ResponseEntity.badRequest().build();
         var user = userMapper.toUser(request);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepo.save(user);
         return new ResponseEntity<>(userMapper.tUserResDTO(user), HttpStatus.CREATED);
 

@@ -1,7 +1,6 @@
 package com.civic_connect_core.app.dtos.dist_admin_dtos;
 
 import com.civic_connect_core.app.validation.dist_validation.DistAlreadyExistValidation;
-import com.civic_connect_core.app.validation.dist_validation.EmailExistDistValidation;
 import com.civic_connect_core.app.validation.email_validation.EmailDomainValidation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -33,12 +32,11 @@ public class DistAdminRegReqDTO {
     @NotBlank(message = "email is required")
     @Email(message = "email must be valid")
     @EmailDomainValidation
-    @EmailExistDistValidation
     @JsonProperty("admin_email")
     private String adminEmail;
     
     @NotBlank(message = "password is required")
-    @Size(min = 6, max = 12, message = "password must be 6 character long")
+    @Size(min = 6, max = 24, message = "password must be 6 character long")
     @JsonProperty("admin_password")
     private String adminPassword;
 }

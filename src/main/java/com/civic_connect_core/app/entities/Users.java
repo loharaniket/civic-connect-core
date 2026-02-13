@@ -16,5 +16,6 @@ public class Users {
     private String userSurname;
     private String userEmail;
     private String password;
+    private String role = "USER";
     private Long distId;
 }
