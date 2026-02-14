@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.civic_connect_core.app.dtos.issues_dtos.IssueReqDTO;
 import com.civic_connect_core.app.dtos.issues_dtos.IssueResDTO;
 import com.civic_connect_core.app.dtos.issues_dtos.IssueUpdateDTO;
-import com.civic_connect_core.app.entities.Issue;
 import com.civic_connect_core.app.mapper.IssueCustomMapping;
 import com.civic_connect_core.app.mapper.IssueMapper;
 import com.civic_connect_core.app.repository.IssueRepo;

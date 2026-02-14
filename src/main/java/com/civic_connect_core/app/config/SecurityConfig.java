@@ -30,7 +30,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(HttpMethod.POST, "/api/dist/admin")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/dist/admin/login")
+                        .requestMatchers(HttpMethod.POST, "/api/auth")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/auth/validate")
                         .permitAll()
                         .requestMatchers("/h2-console/**")
                         .permitAll())

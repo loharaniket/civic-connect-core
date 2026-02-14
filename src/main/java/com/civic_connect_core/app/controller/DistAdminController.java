@@ -3,12 +3,7 @@ package com.civic_connect_core.app.controller;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminLoginReq;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegReqDTO;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegResDTO;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminUpdateReqDTO;
@@ -39,7 +33,6 @@ public class DistAdminController {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final AuthenticationManager authenticationManager;
 
     // get all district admin list
     @GetMapping
@@ -59,13 +52,6 @@ public class DistAdminController {
         newAdmin.setAdminPassword(passwordEncoder.encode(newAdmin.getAdminPassword()));
         repository.save(newAdmin);
         return ResponseEntity.ok(distMapper.tRegResDTO(newAdmin));
-    }
-
-    @PostMapping("/login")
-    public ResponseEntity<?> loginDistAdmin(@Valid @RequestBody DistAdminLoginReq request) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
-        return ResponseEntity.ok().build();
     }
 
     // update district admin account information

@@ -1,7 +1,6 @@
 package com.civic_connect_core.app.dtos.dept_admin_dtos;
 
 import com.civic_connect_core.app.validation.email_validation.EmailDomainValidation;
-import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.validation.constraints.Email;

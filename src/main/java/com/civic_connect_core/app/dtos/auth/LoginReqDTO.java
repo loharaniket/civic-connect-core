@@ -1,4 +1,4 @@
-package com.civic_connect_core.app.dtos.dist_admin_dtos;
+package com.civic_connect_core.app.dtos.auth;
 
 import com.civic_connect_core.app.validation.email_validation.EmailDomainValidation;
 
@@ -8,13 +8,13 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class DistAdminLoginReq {
-    @NotBlank(message = "email is required")
+public class LoginReqDTO {
+    @NotBlank(message = "email address required")
     @Email(message = "enter valid email")
-    @EmailDomainValidation(message = "email not found")
+    @EmailDomainValidation
     private String email;
 
-    @NotBlank(message = "wrong password")
-    @Size(message = "wrong password")
+    @NotBlank(message = "password must be required")
+    @Size(min = 6, max = 24, message = "wrong password")
     private String password;
 }
