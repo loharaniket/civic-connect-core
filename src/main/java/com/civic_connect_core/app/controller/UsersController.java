@@ -1,9 +1,9 @@
 package com.civic_connect_core.app.controller;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.civic_connect_core.app.dtos.user_dtos.UserReqDTO;
 import com.civic_connect_core.app.dtos.user_dtos.UserResDTO;
 import com.civic_connect_core.app.dtos.user_dtos.UserUpdateDTO;
+import com.civic_connect_core.app.entities.Users;
 import com.civic_connect_core.app.mapper.UsersMapper;
 import com.civic_connect_core.app.repository.UsersRepo;
 
@@ -38,6 +39,14 @@ public class UsersController {
         if (user_id <= 0)
             return ResponseEntity.badRequest().build();
         var user = userRepo.findById(user_id).orElseThrow();
+        return ResponseEntity.ok(userMapper.tUserResDTO(user));
+    }
+
+    @GetMapping
+    public ResponseEntity<UserResDTO> getUserProfile() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+        Users user = userRepo.findByUserEmail(email).orElseThrow();
         return ResponseEntity.ok(userMapper.tUserResDTO(user));
     }
 

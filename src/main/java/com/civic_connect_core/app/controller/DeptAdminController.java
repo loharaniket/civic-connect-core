@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminReqDTO;
 import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminResDTO;
 import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminUpdateReq;
+import com.civic_connect_core.app.entities.DepartmentAdmin;
 import com.civic_connect_core.app.mapper.DeptAdminMapper;
 import com.civic_connect_core.app.repository.DeptAdminRepo;
 
@@ -45,9 +47,11 @@ public class DeptAdminController {
     }
 
     // get login admin take their personal info
-    @GetMapping("/{id}")
-    public ResponseEntity<DeptAdminResDTO> getAdmin(@PathVariable Long id) {
-        var admin = deptRepo.findById(id).orElseThrow();
+    @GetMapping
+    public ResponseEntity<DeptAdminResDTO> getDeptAdminProfile() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+        DepartmentAdmin admin = deptRepo.findByEmail(email).orElseThrow();
         return ResponseEntity.ok(deptAdminMappper.tResDTO(admin));
     }
 

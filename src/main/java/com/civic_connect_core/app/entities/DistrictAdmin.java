@@ -20,5 +20,5 @@ public class DistrictAdmin {
     private String adminSurname;
     private String adminEmail;
     private String adminPassword;
-    private String roles = "SUPER_ADMIN";
+    private String role = "SUPER_ADMIN";
 }

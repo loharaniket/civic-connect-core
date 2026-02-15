@@ -8,9 +8,11 @@ import org.springframework.stereotype.Repository;
 import com.civic_connect_core.app.entities.DistrictAdmin;
 
 
+
 @Repository
 public interface DistAdminRepo extends JpaRepository<DistrictAdmin, Long> {
     Optional<DistrictAdmin> findByAdminEmail(String adminEmail);
+    // DistrictAdmin findByAdminEmail(String adminEmail);
 
     Optional<DistrictAdmin> findByDistName(String distName);
 

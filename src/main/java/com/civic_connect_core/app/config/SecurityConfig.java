@@ -11,10 +11,13 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import com.civic_connect_core.app.filters.JwtAuthenticationFilter;
+import com.civic_connect_core.app.services.CustomUserDetailService;
 
 import lombok.AllArgsConstructor;
 
@@ -22,7 +25,9 @@ import lombok.AllArgsConstructor;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfig {
-    private final UserDetailsService userDetailsService;
+    // private final UserDetailsService userDetailsService;
+    private final CustomUserDetailService customUserDetailService;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
@@ -30,15 +35,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(HttpMethod.POST, "/api/dist/admin")
                         .permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/user")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth")
                         .permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/auth/validate")
-                        .permitAll()
+                        .requestMatchers("/api/dist/admin/me").hasRole("SUPER_ADMIN")
+                        .requestMatchers("/api/dept/admin").hasRole("ADMIN")
+                        .requestMatchers("/api/user").hasRole("USER")
                         .requestMatchers("/h2-console/**")
                         .permitAll())
                 .headers(headers -> headers
-                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin) // (3) Allow Frames
+                        .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin) // (3) All
+                        // .auow Frames
                 )
+                .authenticationProvider(authenticationProvider())
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
 
@@ -54,7 +65,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        var provider = new DaoAuthenticationProvider(userDetailsService);
+        var provider = new DaoAuthenticationProvider(customUserDetailService);
         provider.setPasswordEncoder(passwordEncoder());
         return provider;
     }

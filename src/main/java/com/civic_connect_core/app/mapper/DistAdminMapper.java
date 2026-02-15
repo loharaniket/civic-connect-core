@@ -1,6 +1,7 @@
 package com.civic_connect_core.app.mapper;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
@@ -14,7 +15,7 @@ import com.civic_connect_core.app.entities.DistrictAdmin;
 public interface DistAdminMapper {
     DistrictAdmin toDistrictAdmin(DistAdminRegReqDTO request);
 
-    DistAdminRegResDTO tRegResDTO(DistrictAdmin request);
+    DistAdminRegResDTO tRegResDTO(DistrictAdmin admin);
 
     List<DistAdminRegResDTO> toListAdmin(List<DistrictAdmin> admins);
 

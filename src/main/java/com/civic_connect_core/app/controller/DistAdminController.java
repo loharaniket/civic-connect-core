@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -33,12 +34,21 @@ public class DistAdminController {
 
     private final PasswordEncoder passwordEncoder;
 
-
     // get all district admin list
     @GetMapping
     public List<DistAdminRegResDTO> getAllAdmins() {
         List<DistrictAdmin> admins = repository.findAll();
         return admins.stream().map(admin -> distMapper.tRegResDTO(admin)).toList();
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<DistAdminRegResDTO> me() {
+        var auth = SecurityContextHolder.getContext().getAuthentication();
+        String email = (String) auth.getPrincipal();
+        DistrictAdmin admin = repository.findByAdminEmail(email).orElseThrow();
+        if (admin == null)
+            return ResponseEntity.notFound().build();
+        return ResponseEntity.ok(distMapper.tRegResDTO(admin));
     }
 
     // create new district admin

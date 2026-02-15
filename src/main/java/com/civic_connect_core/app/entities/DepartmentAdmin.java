@@ -20,4 +20,5 @@ public class DepartmentAdmin {
     private String password;
     private Long distAdminId;
     private Long deptId;
+    private String role = "ADMIN";
 }
