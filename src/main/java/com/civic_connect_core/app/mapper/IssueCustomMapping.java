@@ -4,12 +4,12 @@ import java.time.LocalDateTime;
 
 import org.springframework.stereotype.Component;
 
-import com.civic_connect_core.app.dtos.issues_dtos.IssueReqDTO;
+import com.civic_connect_core.app.dtos.issues_dtos.IssueRequest;
 import com.civic_connect_core.app.entities.Issue;
 
 @Component
 public class IssueCustomMapping {
-    public Issue reqToIssue(IssueReqDTO request) {
+    public Issue reqToIssue(IssueRequest request) {
         Issue issue = Issue.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())

@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class DeptAdminReqDTO {
+public class DeptAdminRequest {
     @NotBlank(message = "name is required")
     @JsonProperty("name")
     private String firstName;
@@ -30,8 +30,8 @@ public class DeptAdminReqDTO {
     private String password;
 
     // @NotBlank(message = "district id is required")
-    @JsonProperty("dist_admin_id")
-    private Long distAdminId;
+    // @JsonProperty("dist_admin_id")
+    // private Long distAdminId;
 
     // @NotBlank(message = "department id is required")
     @JsonProperty("dept_id")

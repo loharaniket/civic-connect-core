@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
-public class IssueReqDTO {
+public class IssueRequest {
     @NotBlank(message = "title is required")
     private String title;
 

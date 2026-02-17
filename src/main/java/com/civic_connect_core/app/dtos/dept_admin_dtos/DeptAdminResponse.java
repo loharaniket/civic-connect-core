@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @JsonPropertyOrder({"name","surname","email","dept_id"})
-public class DeptAdminResDTO {
+public class DeptAdminResponse {
     private Long id;
     @JsonProperty("name")
     private String firstName;

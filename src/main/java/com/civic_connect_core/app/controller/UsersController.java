@@ -1,73 +1,38 @@
 package com.civic_connect_core.app.controller;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import java.util.Map;
+
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.civic_connect_core.app.dtos.user_dtos.UserReqDTO;
-import com.civic_connect_core.app.dtos.user_dtos.UserResDTO;
-import com.civic_connect_core.app.dtos.user_dtos.UserUpdateDTO;
-import com.civic_connect_core.app.entities.Users;
-import com.civic_connect_core.app.mapper.UsersMapper;
-import com.civic_connect_core.app.repository.UsersRepo;
+import com.civic_connect_core.app.dtos.user_dtos.UserRequest;
+import com.civic_connect_core.app.dtos.user_dtos.UserResponse;
+import com.civic_connect_core.app.services.UsersService;
+import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 
-import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
 @RequestMapping("api/user")
 public class UsersController {
-    private final UsersMapper userMapper;
-    @Autowired
-    private final UsersRepo userRepo;
+    private final UsersService service;
+    private final EmailValidation emailValidation;
 
-    @Autowired
-    private final PasswordEncoder passwordEncoder;
-
-    @GetMapping("/{user_id}")
-    public ResponseEntity<UserResDTO> getUser(@PathVariable Long user_id) {
-        if (user_id <= 0)
-            return ResponseEntity.badRequest().build();
-        var user = userRepo.findById(user_id).orElseThrow();
-        return ResponseEntity.ok(userMapper.tUserResDTO(user));
+    @PostMapping
+    public ResponseEntity<?> insertUser(@RequestBody UserRequest request) {
+        if (emailValidation.isEmailExist(request.getUserEmail()))
+            return ResponseEntity.badRequest().body(Map.of("Email", "Already Exist"));
+        return ResponseEntity.ok(service.insertUser(request));
     }
 
     @GetMapping
-    public ResponseEntity<UserResDTO> getUserProfile() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) auth.getPrincipal();
-        Users user = userRepo.findByUserEmail(email).orElseThrow();
-        return ResponseEntity.ok(userMapper.tUserResDTO(user));
+    public ResponseEntity<UserResponse> getUserProfile() {
+        return ResponseEntity.ok(service.getUserProfile());
     }
 
-    @PostMapping
-    public ResponseEntity<UserResDTO> addUser(@Valid @RequestBody UserReqDTO request) {
-        if (request == null)
-            return ResponseEntity.badRequest().build();
-        var user = userMapper.toUser(request);
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
-        userRepo.save(user);
-        return new ResponseEntity<>(userMapper.tUserResDTO(user), HttpStatus.CREATED);
-
-    }
-
-    @PutMapping("/{user_id}")
-    public ResponseEntity<UserResDTO> updateUser(@RequestBody UserUpdateDTO request, @PathVariable Long user_id) {
-        if (request == null)
-            return ResponseEntity.badRequest().build();
-        var user = userRepo.findById(user_id).orElseThrow();
-        userMapper.updateUser(request, user);
-        userRepo.save(user);
-        return ResponseEntity.ok(userMapper.tUserResDTO(user));
-    }
 }

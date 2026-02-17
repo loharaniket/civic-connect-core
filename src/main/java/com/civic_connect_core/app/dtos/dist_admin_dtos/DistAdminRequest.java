@@ -10,7 +10,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class DistAdminRegReqDTO {
+public class DistAdminRequest {
     @NotBlank(message = "district name cannot be blank")
     @Size(min = 3, message = "district name length should greater than 3")
     @DistAlreadyExistValidation

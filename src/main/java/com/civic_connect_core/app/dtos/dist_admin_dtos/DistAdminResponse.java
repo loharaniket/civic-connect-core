@@ -11,7 +11,7 @@ import lombok.Getter;
 @Getter
 @Data
 @JsonPropertyOrder({"id","district","state","name","surname","email"})
-public class DistAdminRegResDTO {
+public class DistAdminResponse {
     private Long id;
     @JsonProperty("district")
     private String distName;

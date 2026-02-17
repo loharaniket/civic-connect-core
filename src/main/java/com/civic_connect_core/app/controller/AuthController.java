@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.civic_connect_core.app.config.JwtConfig;
 import com.civic_connect_core.app.dtos.auth.JwtResponse;
-import com.civic_connect_core.app.dtos.auth.LoginReqDTO;
+import com.civic_connect_core.app.dtos.auth.AuthRequest;
 import com.civic_connect_core.app.services.CustomUserDetailService;
 import com.civic_connect_core.app.services.JwtService;
 
@@ -36,7 +36,7 @@ public class AuthController {
     private final JwtConfig jwtConfig;
 
     @PostMapping
-    public ResponseEntity<JwtResponse> login(@Valid @RequestBody LoginReqDTO request, HttpServletResponse response) {
+    public ResponseEntity<JwtResponse> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
         System.out.println("request accept by login");
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));

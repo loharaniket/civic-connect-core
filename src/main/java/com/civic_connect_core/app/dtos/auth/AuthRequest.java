@@ -8,7 +8,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
-public class LoginReqDTO {
+public class AuthRequest {
     @NotBlank(message = "email address required")
     @Email(message = "enter valid email")
     @EmailDomainValidation

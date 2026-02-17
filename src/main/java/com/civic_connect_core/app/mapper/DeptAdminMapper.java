@@ -1,18 +1,14 @@
 package com.civic_connect_core.app.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
-import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminReqDTO;
-import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminResDTO;
-import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminUpdateReq;
+import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminRequest;
+import com.civic_connect_core.app.dtos.dept_admin_dtos.DeptAdminResponse;
 import com.civic_connect_core.app.entities.DepartmentAdmin;
 
 @Mapper(componentModel = "spring")
 public interface DeptAdminMapper {
-    DeptAdminResDTO tResDTO(DepartmentAdmin request);
+    DeptAdminResponse tResDTO(DepartmentAdmin request);
 
-    DepartmentAdmin tDepartmentAdmin(DeptAdminReqDTO request);
-
-    void updateDeptAdmin(DeptAdminUpdateReq request, @MappingTarget DepartmentAdmin admin);
+    DepartmentAdmin tDepartmentAdmin(DeptAdminRequest request);
 }

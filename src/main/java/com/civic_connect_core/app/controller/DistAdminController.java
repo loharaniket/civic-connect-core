@@ -3,22 +3,16 @@ package com.civic_connect_core.app.controller;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegReqDTO;
-import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRegResDTO;
-import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminUpdateReqDTO;
-import com.civic_connect_core.app.entities.DistrictAdmin;
-import com.civic_connect_core.app.mapper.DistAdminMapper;
-import com.civic_connect_core.app.repository.DistAdminRepo;
-import com.civic_connect_core.app.utility.SecurityContextDetail;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRequest;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminResponse;
+import com.civic_connect_core.app.services.DistrictAdminService;
+import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -27,51 +21,24 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 @RequestMapping("api/dist/admin")
 public class DistAdminController {
-    private final DistAdminMapper distMapper;
-    private final DistAdminRepo repository;
-    private final PasswordEncoder passwordEncoder;
-    private final SecurityContextDetail securityContextDetail;
+    private final DistrictAdminService service;
+    private final EmailValidation emailValidation;
 
     @GetMapping
-    public ResponseEntity<DistAdminRegResDTO> profile() {
-        String email = securityContextDetail.getEmailFromContext();
-        DistrictAdmin admin = repository.findByAdminEmail(email).orElse(null);
-        if (admin == null)
-            return ResponseEntity.notFound().build();
-        return ResponseEntity.ok(distMapper.tRegResDTO(admin));
+    public ResponseEntity<DistAdminResponse> getDistAdminProfile() {
+        return ResponseEntity.ok(service.getDistAdminProfile());
     }
 
     // create new district admin
     @PostMapping
-    public ResponseEntity<?> addDistAdmin(@Valid @RequestBody DistAdminRegReqDTO request) {
-        if (repository.existsByAdminEmail(request.getAdminEmail())) {
-            // {"Email":"Email Already Exist"}
+    public ResponseEntity<?> insertDistAdmin(@Valid @RequestBody DistAdminRequest request) {
+        if (emailValidation.isEmailExist(request.getAdminEmail())) {
             return ResponseEntity.badRequest().body(Map.of("Email", "Email Already Exist"));
         }
-        var newAdmin = distMapper.toDistrictAdmin(request);
-        newAdmin.setAdminPassword(passwordEncoder.encode(newAdmin.getAdminPassword()));
-        repository.save(newAdmin);
-        return ResponseEntity.ok(distMapper.tRegResDTO(newAdmin));
-    }
-
-    // update district admin account information
-    @PutMapping("/{id}")
-    public ResponseEntity<DistAdminRegResDTO> udpateDistAdmin(@RequestBody DistAdminUpdateReqDTO request,
-            @PathVariable Long id) {
-        if (request != null) {
-            var admin = repository.findById(id).orElseThrow(() -> new RuntimeException());
-            distMapper.updateDistAdminProfile(request, admin);
-            repository.save(admin);
-            var res = distMapper.tRegResDTO(admin);
-            return ResponseEntity.ok(res);
+        if (service.isDistrictExist(request.getDistName())) {
+            return ResponseEntity.badRequest().body(Map.of("District", "District Name Already Exist"));
         }
-        return ResponseEntity.badRequest().build();
+        return ResponseEntity.ok(service.insertDistAdmin(request));
     }
 
-    // get all district admin list
-    // @GetMapping
-    // public List<DistAdminRegResDTO> getAllAdmins() {
-    // List<DistrictAdmin> admins = repository.findAll();
-    // return admins.stream().map(admin -> distMapper.tRegResDTO(admin)).toList();
-    // }
 }
