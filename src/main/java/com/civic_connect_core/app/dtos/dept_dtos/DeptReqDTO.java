@@ -2,16 +2,12 @@ package com.civic_connect_core.app.dtos.dept_dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 @Data
 public class DeptReqDTO {
-    @NotEmpty(message = "department name required")
-    @JsonProperty("dept_name")
+    @NotBlank(message = "department is required")
+    @JsonProperty("department")
     private String deptName;
-    
-    @NotEmpty(message = "district admin id required")
-    @JsonProperty("dist_admin_id")
-    private Long distAdminId;
 }

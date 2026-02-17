@@ -1,10 +1,8 @@
 package com.civic_connect_core.app.controller;
 
-import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +18,7 @@ import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminUpdateReqDTO;
 import com.civic_connect_core.app.entities.DistrictAdmin;
 import com.civic_connect_core.app.mapper.DistAdminMapper;
 import com.civic_connect_core.app.repository.DistAdminRepo;
+import com.civic_connect_core.app.utility.SecurityContextDetail;
 
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,23 +28,14 @@ import lombok.AllArgsConstructor;
 @RequestMapping("api/dist/admin")
 public class DistAdminController {
     private final DistAdminMapper distMapper;
-
     private final DistAdminRepo repository;
-
     private final PasswordEncoder passwordEncoder;
+    private final SecurityContextDetail securityContextDetail;
 
-    // get all district admin list
     @GetMapping
-    public List<DistAdminRegResDTO> getAllAdmins() {
-        List<DistrictAdmin> admins = repository.findAll();
-        return admins.stream().map(admin -> distMapper.tRegResDTO(admin)).toList();
-    }
-
-    @GetMapping("/me")
-    public ResponseEntity<DistAdminRegResDTO> me() {
-        var auth = SecurityContextHolder.getContext().getAuthentication();
-        String email = (String) auth.getPrincipal();
-        DistrictAdmin admin = repository.findByAdminEmail(email).orElseThrow();
+    public ResponseEntity<DistAdminRegResDTO> profile() {
+        String email = securityContextDetail.getEmailFromContext();
+        DistrictAdmin admin = repository.findByAdminEmail(email).orElse(null);
         if (admin == null)
             return ResponseEntity.notFound().build();
         return ResponseEntity.ok(distMapper.tRegResDTO(admin));
@@ -77,4 +67,11 @@ public class DistAdminController {
         }
         return ResponseEntity.badRequest().build();
     }
+
+    // get all district admin list
+    // @GetMapping
+    // public List<DistAdminRegResDTO> getAllAdmins() {
+    // List<DistrictAdmin> admins = repository.findAll();
+    // return admins.stream().map(admin -> distMapper.tRegResDTO(admin)).toList();
+    // }
 }

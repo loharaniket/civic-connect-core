@@ -31,16 +31,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         var authHeader = request.getHeader("Authorization");
         if (authHeader == null) {
-            System.out.println("authorization null");
+            System.out.println("Auth Header Null");
             filterChain.doFilter(request, response);
             return;
         }
         
         if (!jwtService.validateToken(authHeader)) {
-            System.out.println("not valid token");
+            System.out.println("Not Valid Token");
             filterChain.doFilter(request, response);
             return;
         }
+        System.out.println("Passed All Test Jwt Filter");
         UserDetails userDetails = userDetailService.loadUserByUsername(jwtService.getEmailFromToken(authHeader));
         var authentication = new UsernamePasswordAuthenticationToken(
                 userDetails.getUsername(),
@@ -49,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         authentication.setDetails(
                 new WebAuthenticationDetailsSource().buildDetails(request));
 
+        System.out.println("Now Set SecurityContext");
         SecurityContextHolder.getContext().setAuthentication(authentication);
         filterChain.doFilter(request, response);
 

@@ -14,29 +14,29 @@ public class DistAdminRegReqDTO {
     @NotBlank(message = "district name cannot be blank")
     @Size(min = 3, message = "district name length should greater than 3")
     @DistAlreadyExistValidation
-    @JsonProperty("dist_name")
+    @JsonProperty("district")
     private String distName;
 
     @NotBlank(message = "state is required")
-    @JsonProperty("dist_state")
+    @JsonProperty("state")
     private String distState;
 
     @NotBlank(message = "name is required")
-    @JsonProperty("admin_name")
+    @JsonProperty("name")
     private String adminName;
 
     @NotBlank(message = "surname is required")
-    @JsonProperty("admin_surname")
+    @JsonProperty("surname")
     private String adminSurname;
     
     @NotBlank(message = "email is required")
     @Email(message = "email must be valid")
     @EmailDomainValidation
-    @JsonProperty("admin_email")
+    @JsonProperty("email")
     private String adminEmail;
     
     @NotBlank(message = "password is required")
     @Size(min = 6, max = 24, message = "password must be 6 character long")
-    @JsonProperty("admin_password")
+    @JsonProperty("password")
     private String adminPassword;
 }
