@@ -34,7 +34,7 @@ public class DistrictAdminService {
         return distAdminRepo.findByDistName(district.toUpperCase()).isPresent();
     }
 
-    public boolean isDistrictExistById(Long id) {
+    public boolean isDistIdPresent(Long id) {
         return distAdminRepo.findById(id).isPresent();
     }
 

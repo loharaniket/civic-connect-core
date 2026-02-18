@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 
 import com.civic_connect_core.app.dtos.user_dtos.UserRequest;
 import com.civic_connect_core.app.dtos.user_dtos.UserResponse;
+import com.civic_connect_core.app.entities.Users;
 import com.civic_connect_core.app.mapper.UsersMapper;
 import com.civic_connect_core.app.repository.UsersRepo;
 import com.civic_connect_core.app.utility.SecurityContextDetail;
@@ -25,10 +26,16 @@ public class UsersService {
         repository.save(user);
         return mapper.tUserResDTO(user);
     }
-    
-    public UserResponse getUserProfile() {
+
+    public Users getUserDetail() {
         String email = context.getEmailFromContext();
         var user = repository.findByUserEmail(email).orElseThrow();
+        return user;
+
+    }
+
+    public UserResponse getUserProfile() {
+        var user = getUserDetail();
         return mapper.tUserResDTO(user);
     }
 

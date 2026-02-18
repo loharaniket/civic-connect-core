@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.civic_connect_core.app.dtos.user_dtos.UserRequest;
 import com.civic_connect_core.app.dtos.user_dtos.UserResponse;
+import com.civic_connect_core.app.services.DistrictAdminService;
 import com.civic_connect_core.app.services.UsersService;
 import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 
@@ -22,11 +23,15 @@ import lombok.AllArgsConstructor;
 public class UsersController {
     private final UsersService service;
     private final EmailValidation emailValidation;
+    private final DistrictAdminService districtAdminService;
 
     @PostMapping
     public ResponseEntity<?> insertUser(@RequestBody UserRequest request) {
         if (emailValidation.isEmailExist(request.getUserEmail()))
             return ResponseEntity.badRequest().body(Map.of("Email", "Already Exist"));
+        if (!districtAdminService.isDistIdPresent(request.getDistId())) {
+            return ResponseEntity.badRequest().body(Map.of("District", "District Not Present"));
+        }
         return ResponseEntity.ok(service.insertUser(request));
     }
 

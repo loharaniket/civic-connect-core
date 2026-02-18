@@ -2,13 +2,11 @@ package com.civic_connect_core.app.services;
 
 import java.util.List;
 
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.civic_connect_core.app.dtos.dept_dtos.DepartmentRequest;
 import com.civic_connect_core.app.entities.Department;
 import com.civic_connect_core.app.entities.DistrictAdmin;
-import com.civic_connect_core.app.mapper.DeptAdminMapper;
 import com.civic_connect_core.app.mapper.DeptMapper;
 import com.civic_connect_core.app.repository.DeptRepo;
 
@@ -24,6 +22,10 @@ public class DepartmentService {
     public List<Department> getDepartmentList() {
         DistrictAdmin admin = districtAdminService.getContextDistAdmin();
         return repository.findByDistAdminId(admin.getId());
+    }
+
+    public boolean isDepartmentIdPresent(Long id) {
+        return repository.findById(id).isPresent();
     }
 
     public Department insertDepartment(DepartmentRequest request) {

@@ -15,7 +15,7 @@ INSERT INTO dist_admin(dist_name,dist_state,admin_name,admin_surname,admin_email
 VALUES ('Kolhapur','Maharastra','Deepak','Lohar','deepaklohar1972@gmail.com','$2a$10$MySmioX/u0niioN19G6qhelAw3LD54cITfmEuGuAbEIkDIoBwUaQe','SUPER_ADMIN');
 
 INSERT INTO dist_admin(dist_name,dist_state,admin_name,admin_surname,admin_email,admin_password,role)
-VALUES ('Kolhapur','Maharastra','Deepak','Lohar','loharaniket@gmail.com','$2a$10$MySmioX/u0niioN19G6qhelAw3LD54cITfmEuGuAbEIkDIoBwUaQe','SUPER_ADMIN');
+VALUES ('Sangli','Maharastra','Aniket','Lohar','loharaniket@gmail.com','$2a$10$MySmioX/u0niioN19G6qhelAw3LD54cITfmEuGuAbEIkDIoBwUaQe','SUPER_ADMIN');
 
 -- INSERT INTO DEPARTMENT (department)
 -- VALUES ('Public Works'),

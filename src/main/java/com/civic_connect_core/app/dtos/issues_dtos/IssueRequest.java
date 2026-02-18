@@ -14,7 +14,6 @@ public class IssueRequest {
     @JsonProperty("desc")
     private String description;
 
-    @NotBlank(message = "auther id is required")
-    @JsonProperty("auther_id")
-    private Long autherId;
+    @JsonProperty("department")
+    private Long dept_id;
 }
