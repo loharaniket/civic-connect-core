@@ -15,6 +15,7 @@ import com.civic_connect_core.app.services.DistrictAdminService;
 import com.civic_connect_core.app.services.UsersService;
 import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -26,7 +27,7 @@ public class UsersController {
     private final DistrictAdminService districtAdminService;
 
     @PostMapping
-    public ResponseEntity<?> insertUser(@RequestBody UserRequest request) {
+    public ResponseEntity<?> insertUser(@Valid @RequestBody UserRequest request) {
         if (emailValidation.isEmailExist(request.getUserEmail()))
             return ResponseEntity.badRequest().body(Map.of("Email", "Already Exist"));
         if (!districtAdminService.isDistIdPresent(request.getDistId())) {

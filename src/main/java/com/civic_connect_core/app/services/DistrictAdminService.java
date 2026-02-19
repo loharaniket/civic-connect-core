@@ -1,11 +1,14 @@
 package com.civic_connect_core.app.services;
 
+import java.util.List;
+
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRequest;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminResponse;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistrictPublicResponse;
 import com.civic_connect_core.app.entities.DistrictAdmin;
 import com.civic_connect_core.app.mapper.DistAdminMapper;
 import com.civic_connect_core.app.repository.DistAdminRepo;
@@ -55,5 +58,9 @@ public class DistrictAdminService {
         String email = contextDetail.getEmailFromContext();
         var admin = distAdminRepo.findByAdminEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
         return distAdminMapper.tRegResDTO(admin);
+    }
+
+    public List<DistrictPublicResponse> getAllDistrictList() {
+        return distAdminRepo.findAll().stream().map(dist -> distAdminMapper.tDistrictPublicResponse(dist)).toList();
     }
 }

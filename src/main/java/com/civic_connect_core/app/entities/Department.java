@@ -1,6 +1,5 @@
 package com.civic_connect_core.app.entities;
 
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;

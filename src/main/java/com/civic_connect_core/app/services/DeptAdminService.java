@@ -28,7 +28,7 @@ public class DeptAdminService {
         return repository.findByEmail(email).isPresent();
     }
 
-    private DepartmentAdmin getContexDepartmentAdmin() {
+    public DepartmentAdmin getDepartmentAdminDetail() {
         String email = context.getEmailFromContext();
         return repository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException(email));
     }
@@ -43,7 +43,7 @@ public class DeptAdminService {
     }
 
     public DeptAdminResponse getDeptAdminProfile() {
-        return mapper.tResDTO(getContexDepartmentAdmin());
+        return mapper.tResDTO(getDepartmentAdminDetail());
     }
 
     public List<DeptAdminResponse> getDeptAdminList() {

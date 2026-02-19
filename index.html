@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Civic Issue Management</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .hidden-view { display: none !important; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3498db; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block;}
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 h-screen overflow-hidden flex flex-col">
+
+    <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2"></div>
+
+    <nav id="navbar" class="bg-blue-900 text-white p-4 shadow-md flex justify-between items-center hidden-view shrink-0">
+        <h1 class="text-xl font-bold tracking-wide">CivicConnect</h1>
+        <div class="flex items-center gap-4">
+            <span id="nav-role" class="text-sm bg-blue-800 px-3 py-1 rounded-full border border-blue-700">Role</span>
+            <button onclick="logout()" class="hover:text-red-300 text-sm font-semibold transition">Logout</button>
+        </div>
+    </nav>
+
+    <main class="flex-1 overflow-y-auto p-4 md:p-8">
+
+        <section id="view-auth" class="max-w-md mx-auto mt-10 bg-white p-8 rounded-xl shadow-lg border border-slate-100">
+            <h2 class="text-2xl font-bold text-center mb-6 text-slate-800" id="auth-title">Welcome Back</h2>
+            
+            <form id="form-login" class="space-y-5">
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Email Address</label>
+                    <input type="email" id="login-email" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-slate-600 mb-1">Password</label>
+                    <input type="password" id="login-pass" class="w-full border border-slate-300 rounded-lg p-2.5 focus:ring-2 focus:ring-blue-500 outline-none" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 rounded-lg transition shadow-md flex justify-center items-center gap-2">
+                    <span id="login-btn-text">Sign In</span>
+                </button>
+                <p class="text-sm text-center text-slate-500 mt-4">Don't have an account? <a href="#" onclick="toggleAuth('register')" class="text-blue-600 font-semibold hover:underline">Register here</a></p>
+            </form>
+
+            <div id="wrapper-register" class="hidden-view">
+                <div class="flex border-b border-slate-200 mb-6">
+                    <button id="tab-user" onclick="switchRegTab('user')" class="w-1/2 py-2 text-center font-bold text-blue-600 border-b-2 border-blue-600 transition">Citizen</button>
+                    <button id="tab-admin" onclick="switchRegTab('admin')" class="w-1/2 py-2 text-center font-bold text-slate-400 border-b-2 border-transparent transition">District Admin</button>
+                </div>
+
+                <form id="form-register-user" class="space-y-4">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                            <input type="text" id="reg-name" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Surname</label>
+                            <input type="text" id="reg-surname" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                        <input type="email" id="reg-email" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Password</label>
+                        <input type="password" id="reg-pass" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Select District</label>
+                        <select id="reg-dist" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500 bg-slate-50" required>
+                            <option value="">Loading districts...</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2.5 rounded-lg transition shadow-md">Register as Citizen</button>
+                </form>
+
+                <form id="form-register-admin" class="space-y-4 hidden-view">
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">First Name</label>
+                            <input type="text" id="reg-admin-name" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Surname</label>
+                            <input type="text" id="reg-admin-surname" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Email</label>
+                        <input type="email" id="reg-admin-email" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-600 mb-1">Password</label>
+                        <input type="password" id="reg-admin-pass" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                    </div>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">District Name</label>
+                            <input type="text" id="reg-admin-district" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">State</label>
+                            <input type="text" id="reg-admin-state" class="w-full border border-slate-300 rounded-lg p-2 focus:ring-2 focus:ring-blue-500" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-2.5 rounded-lg transition shadow-md">Register as Administrator</button>
+                </form>
+
+                <p class="text-sm text-center text-slate-500 mt-6">Already registered? <a href="#" onclick="toggleAuth('login')" class="text-blue-600 font-semibold hover:underline">Sign in</a></p>
+            </div>
+        </section>
+
+        <section id="view-user" class="hidden-view max-w-5xl mx-auto space-y-6">
+            <h2 class="text-3xl font-bold text-slate-800">Citizen Dashboard</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-1 h-fit">
+                    <h3 class="text-lg font-bold text-blue-700 border-b pb-2 mb-4">Report an Issue</h3>
+                    <form id="form-report-issue" class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Issue Title</label>
+                            <input type="text" id="issue-title" class="w-full border rounded-lg p-2" required>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Department</label>
+                            <select id="issue-dept" class="w-full border rounded-lg p-2 bg-slate-50" required>
+                                <option value="">Loading departments...</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-slate-600 mb-1">Description</label>
+                            <textarea id="issue-desc" rows="3" class="w-full border rounded-lg p-2" required></textarea>
+                        </div>
+                        <button type="submit" class="w-full bg-blue-600 text-white font-bold py-2 rounded-lg hover:bg-blue-700">Submit Report</button>
+                    </form>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
+                    <div class="flex justify-between items-center border-b pb-2 mb-4">
+                        <h3 class="text-lg font-bold text-slate-800">My Reported Issues</h3>
+                        <button onclick="loadUserIssues()" class="text-sm bg-slate-100 px-3 py-1 rounded hover:bg-slate-200 border">Refresh</button>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-50 text-slate-600 uppercase">
+                                <tr>
+                                    <th class="px-4 py-3 rounded-tl-lg">ID</th>
+                                    <th class="px-4 py-3">Title</th>
+                                    <th class="px-4 py-3">Status</th>
+                                    <th class="px-4 py-3 rounded-tr-lg">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="user-issues-table" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="p-4 text-center text-slate-500">Loading issues...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-dist-admin" class="hidden-view max-w-6xl mx-auto space-y-6">
+            <h2 class="text-3xl font-bold text-slate-800">District Administrator</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <div class="space-y-6 lg:col-span-1">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-800 border-b pb-2 mb-3">Create Department</h3>
+                        <form id="form-create-dept" class="flex gap-2">
+                            <input type="text" id="new-dept-name" placeholder="E.g., Water Supply" class="w-full border rounded-lg p-2 text-sm" required>
+                            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-blue-700">Add</button>
+                        </form>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
+                        <h3 class="font-bold text-slate-800 border-b pb-2 mb-3">Add Dept Admin</h3>
+                        <form id="form-create-dept-admin" class="space-y-3">
+                            <div class="grid grid-cols-2 gap-2">
+                                <input type="text" id="da-name" placeholder="Name" class="border rounded p-2 text-sm" required>
+                                <input type="text" id="da-surname" placeholder="Surname" class="border rounded p-2 text-sm" required>
+                            </div>
+                            <input type="email" id="da-email" placeholder="Email Address" class="w-full border rounded p-2 text-sm" required>
+                            <input type="password" id="da-pass" placeholder="Password" class="w-full border rounded p-2 text-sm" required>
+                            <select id="da-dept" class="w-full border rounded p-2 text-sm bg-slate-50" required>
+                                <option value="">Select Department...</option>
+                            </select>
+                            <button type="submit" class="w-full bg-slate-800 text-white px-4 py-2 rounded-lg text-sm font-bold hover:bg-slate-900">Create Admin</button>
+                        </form>
+                    </div>
+                </div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200 lg:col-span-2">
+                    <div class="flex justify-between items-center border-b pb-2 mb-4">
+                        <h3 class="text-lg font-bold text-slate-800">All District Issues</h3>
+                        <button onclick="loadDistIssues()" class="text-sm bg-slate-100 px-3 py-1 rounded hover:bg-slate-200 border">Refresh</button>
+                    </div>
+                    <div class="overflow-x-auto h-96 overflow-y-auto">
+                        <table class="w-full text-left text-sm relative">
+                            <thead class="bg-slate-50 text-slate-600 uppercase sticky top-0">
+                                <tr>
+                                    <th class="px-4 py-3">ID</th>
+                                    <th class="px-4 py-3">Title</th>
+                                    <th class="px-4 py-3">Status</th>
+                                    <th class="px-4 py-3">Date</th>
+                                </tr>
+                            </thead>
+                            <tbody id="dist-issues-table" class="divide-y divide-slate-100">
+                                <tr><td colspan="4" class="p-4 text-center text-slate-500">Loading issues...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="view-dept-admin" class="hidden-view max-w-5xl mx-auto space-y-6">
+            <h2 class="text-3xl font-bold text-slate-800">Department Dashboard</h2>
+            <div class="bg-white p-6 rounded-xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center border-b pb-2 mb-4">
+                    <h3 class="text-lg font-bold text-slate-800">Issues Assigned to Department</h3>
+                    <button onclick="loadDeptIssues()" class="text-sm bg-slate-100 px-3 py-1 rounded hover:bg-slate-200 border">Refresh</button>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="bg-slate-50 text-slate-600 uppercase">
+                            <tr>
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Title / Desc</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dept-issues-table" class="divide-y divide-slate-100">
+                            <tr><td colspan="4" class="p-4 text-center text-slate-500">Loading issues...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const API_URL = 'http://localhost:8080/api';
+        let authToken = localStorage.getItem('civic_token') || null;
+        let currentRole = localStorage.getItem('civic_role') || null;
+
+        /** UI UTILITIES */
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const bgColor = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+            toast.className = `${bgColor} text-white px-4 py-3 rounded shadow-lg transform transition-all duration-300 translate-x-full flex items-center gap-2`;
+            toast.innerHTML = `<span class="font-bold">${type === 'success' ? '✓' : '⚠'}</span> <span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => toast.classList.remove('translate-x-full'), 10);
+            setTimeout(() => {
+                toast.classList.add('translate-x-full');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        async function fetchAPI(endpoint, method = 'GET', body = null, requireAuth = true) {
+            const headers = { 'Content-Type': 'application/json' };
+            if (requireAuth && authToken) headers['Authorization'] = `${authToken}`;
+            
+            const options = { method, headers };
+            if (body) options.body = JSON.stringify(body);
+
+            const response = await fetch(`${API_URL}${endpoint}`, options);
+            let data = {};
+            const contentType = response.headers.get("content-type");
+            if (contentType && contentType.includes("application/json")) {
+                data = await response.json();
+            }
+
+            if (!response.ok) {
+                throw new Error(data.message || data.error || `HTTP Error ${response.status}`);
+            }
+            return data;
+        }
+
+        /** ROUTING & VIEW MANAGEMENT */
+        function navigateTo(role) {
+            ['view-auth', 'view-user', 'view-dist-admin', 'view-dept-admin'].forEach(id => {
+                document.getElementById(id).classList.add('hidden-view');
+            });
+            
+            document.getElementById('navbar').classList.remove('hidden-view');
+            document.getElementById('nav-role').textContent = role.toUpperCase();
+
+            if (role === 'user') {
+                document.getElementById('view-user').classList.remove('hidden-view');
+                loadPublicDataForUser();
+                loadUserIssues();
+            } else if (role === 'distAdmin') {
+                document.getElementById('view-dist-admin').classList.remove('hidden-view');
+                loadDistIssues();
+                loadPublicDataForAdmin();
+            } else if (role === 'deptAdmin') {
+                document.getElementById('view-dept-admin').classList.remove('hidden-view');
+                loadDeptIssues();
+            }
+        }
+
+        function toggleAuth(type) {
+            if (type === 'register') {
+                document.getElementById('form-login').classList.add('hidden-view');
+                document.getElementById('wrapper-register').classList.remove('hidden-view');
+                document.getElementById('auth-title').textContent = "Create an Account";
+                loadPublicDistricts(); 
+            } else {
+                document.getElementById('wrapper-register').classList.add('hidden-view');
+                document.getElementById('form-login').classList.remove('hidden-view');
+                document.getElementById('auth-title').textContent = "Welcome Back";
+            }
+        }
+
+        function switchRegTab(type) {
+            const tabUser = document.getElementById('tab-user');
+            const tabAdmin = document.getElementById('tab-admin');
+            const formUser = document.getElementById('form-register-user');
+            const formAdmin = document.getElementById('form-register-admin');
+
+            if (type === 'user') {
+                formUser.classList.remove('hidden-view');
+                formAdmin.classList.add('hidden-view');
+                tabUser.classList.replace('text-slate-400', 'text-blue-600');
+                tabUser.classList.replace('border-transparent', 'border-blue-600');
+                tabAdmin.classList.replace('text-blue-600', 'text-slate-400');
+                tabAdmin.classList.replace('border-blue-600', 'border-transparent');
+            } else {
+                formAdmin.classList.remove('hidden-view');
+                formUser.classList.add('hidden-view');
+                tabAdmin.classList.replace('text-slate-400', 'text-blue-600');
+                tabAdmin.classList.replace('border-transparent', 'border-blue-600');
+                tabUser.classList.replace('text-blue-600', 'text-slate-400');
+                tabUser.classList.replace('border-blue-600', 'border-transparent');
+            }
+        }
+
+        function checkAuth() {
+            if (authToken && currentRole) {
+                navigateTo(currentRole);
+            } else {
+                document.getElementById('view-auth').classList.remove('hidden-view');
+            }
+        }
+
+        function logout() {
+            authToken = null;
+            currentRole = null;
+            localStorage.removeItem('civic_token');
+            localStorage.removeItem('civic_role');
+            document.getElementById('navbar').classList.add('hidden-view');
+            ['view-user', 'view-dist-admin', 'view-dept-admin'].forEach(id => {
+                document.getElementById(id).classList.add('hidden-view');
+            });
+            document.getElementById('view-auth').classList.remove('hidden-view');
+            toggleAuth('login');
+            showToast("Logged out successfully");
+        }
+
+        /** AUTO-RECOGNIZE ROLE LOGIC */
+        async function determineUserRole() {
+            // Test User Profile
+            try { 
+                await fetchAPI('/user', 'GET'); 
+                return 'user'; 
+            } catch (e) {}
+            // Test District Admin Profile
+            try { 
+                await fetchAPI('/dist/admin', 'GET'); 
+                return 'distAdmin'; 
+            } catch (e) {}
+            // Test Department Admin Profile
+            try { 
+                await fetchAPI('/dept/admin', 'GET'); 
+                return 'deptAdmin'; 
+            } catch (e) {}
+            
+            throw new Error("Could not determine user role. Invalid permissions.");
+        }
+
+        /** AUTHENTICATION API CALLS */
+        document.getElementById('form-login').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btnText = document.getElementById('login-btn-text');
+            btnText.innerHTML = '<div class="loader"></div>';
+
+            const payload = {
+                email: document.getElementById('login-email').value,
+                password: document.getElementById('login-pass').value
+            };
+
+            try {
+                // 1. Get Token
+                const res = await fetchAPI('/auth', 'POST', payload, false);
+                authToken = res.token || "dummy-token"; // Modify if backend relies strictly on httpOnly cookies
+                localStorage.setItem('civic_token', authToken);
+                
+                // 2. Auto-recognize Role
+                currentRole = await determineUserRole();
+                localStorage.setItem('civic_role', currentRole);
+                
+                showToast("Login Successful");
+                navigateTo(currentRole);
+            } catch (err) {
+                showToast(err.message, 'error');
+            } finally {
+                btnText.textContent = 'Sign In';
+            }
+        });
+
+        // Citizen Registration API
+        document.getElementById('form-register-user').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                name: document.getElementById('reg-name').value,
+                surname: document.getElementById('reg-surname').value,
+                email: document.getElementById('reg-email').value,
+                password: document.getElementById('reg-pass').value,
+                dist_id: parseInt(document.getElementById('reg-dist').value)
+            };
+            try {
+                await fetchAPI('/user', 'POST', payload, false);
+                showToast("Citizen Registration successful! Please login.");
+                document.getElementById('form-register-user').reset();
+                toggleAuth('login');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+
+        // District Admin Registration API
+        document.getElementById('form-register-admin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                district: document.getElementById('reg-admin-district').value,
+                state: document.getElementById('reg-admin-state').value,
+                name: document.getElementById('reg-admin-name').value,
+                surname: document.getElementById('reg-admin-surname').value,
+                email: document.getElementById('reg-admin-email').value,
+                password: document.getElementById('reg-admin-pass').value
+            };
+            try {
+                await fetchAPI('/dist/admin', 'POST', payload, false);
+                showToast("Admin Registration successful! Please login.");
+                document.getElementById('form-register-admin').reset();
+                toggleAuth('login');
+            } catch (err) {
+                showToast(err.message, 'error');
+            }
+        });
+
+        /** DASHBOARD DATA LOADERS (Abridged core functionality maintained) */
+        async function loadPublicDistricts() {
+            try {
+                const dists = await fetchAPI('/dist/admin/public', 'GET', null, false);
+                const select = document.getElementById('reg-dist');
+                select.innerHTML = '<option value="">Select a District...</option>' + 
+                    dists.map(d => `<option value="${d.id}">${d.district}, ${d.state}</option>`).join('');
+            } catch (err) {
+                document.getElementById('reg-dist').innerHTML = '<option value="">Failed to load.</option>';
+            }
+        }
+        async function loadPublicDataForUser() {
+            try {
+                const depts = await fetchAPI('/dept/public', 'GET', null, false);
+                const select = document.getElementById('issue-dept');
+                select.innerHTML = '<option value="">Select Department...</option>' + depts.map(d => `<option value="${d.id}">${d.deptName}</option>`).join('');
+            } catch (err) {}
+        }
+        async function loadPublicDataForAdmin() {
+            try {
+                const depts = await fetchAPI('/dept', 'GET');
+                const select = document.getElementById('da-dept');
+                select.innerHTML = '<option value="">Select Department...</option>' + depts.map(d => `<option value="${d.id}">${d.deptName}</option>`).join('');
+            } catch (err) {}
+        }
+
+        // Issue Loaders
+        async function loadUserIssues() {
+            const tbody = document.getElementById('user-issues-table');
+            try {
+                const issues = await fetchAPI('/issue', 'GET');
+                if(!issues || issues.length === 0) return tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No issues reported yet.</td></tr>';
+                tbody.innerHTML = issues.map(i => `<tr class="border-b"><td class="p-3">#${i.id}</td><td class="p-3">${i.title}</td><td class="p-3">${i.status || 'OPEN'}</td><td class="p-3">${new Date(i.createdAt).toLocaleDateString()}</td></tr>`).join('');
+            } catch (err) {}
+        }
+        async function loadDistIssues() {
+            const tbody = document.getElementById('dist-issues-table');
+            try {
+                const issues = await fetchAPI('/issue/dist', 'GET');
+                if(!issues || issues.length === 0) return tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No issues found.</td></tr>';
+                tbody.innerHTML = issues.map(i => `<tr class="border-b"><td class="p-3">#${i.id}</td><td class="p-3 font-semibold">${i.title}</td><td class="p-3">${i.status || 'OPEN'}</td><td class="p-3">${new Date(i.createdAt).toLocaleDateString()}</td></tr>`).join('');
+            } catch (err) {}
+        }
+        async function loadDeptIssues() {
+            const tbody = document.getElementById('dept-issues-table');
+            try {
+                const issues = await fetchAPI('/issue/dept', 'GET');
+                if(!issues || issues.length === 0) return tbody.innerHTML = '<tr><td colspan="4" class="p-4 text-center text-slate-500">No issues assigned.</td></tr>';
+                tbody.innerHTML = issues.map(i => `<tr class="border-b"><td class="p-3">#${i.id}</td><td class="p-3 font-semibold">${i.title}</td><td class="p-3">${i.status || 'OPEN'}</td><td class="p-3">${new Date(i.createdAt).toLocaleDateString()}</td></tr>`).join('');
+            } catch (err) {}
+        }
+
+        // Submissions
+        document.getElementById('form-report-issue').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await fetchAPI('/issue', 'POST', { title: document.getElementById('issue-title').value, desc: document.getElementById('issue-desc').value, department: parseInt(document.getElementById('issue-dept').value) });
+            showToast("Issue reported successfully!");
+            document.getElementById('form-report-issue').reset();
+            loadUserIssues();
+        });
+        document.getElementById('form-create-dept').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await fetchAPI('/dept', 'POST', { department: document.getElementById('new-dept-name').value });
+            showToast("Department created!");
+            document.getElementById('new-dept-name').value = '';
+            loadPublicDataForAdmin();
+        });
+        document.getElementById('form-create-dept-admin').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            await fetchAPI('/dept/admin', 'POST', { name: document.getElementById('da-name').value, surname: document.getElementById('da-surname').value, email: document.getElementById('da-email').value, password: document.getElementById('da-pass').value, dept_id: parseInt(document.getElementById('da-dept').value) });
+            showToast("Department Admin created!");
+            document.getElementById('form-create-dept-admin').reset();
+        });
+
+        // Init
+        checkAuth();
+    </script>
+</body>
+</html>

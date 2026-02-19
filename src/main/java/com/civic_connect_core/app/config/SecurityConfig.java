@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -30,9 +31,11 @@ public class SecurityConfig {
     // private final UserDetailsService userDetailsService;
     private final CustomUserDetailService customUserDetailService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http.sessionManagement(c -> c.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .cors(Customizer.withDefaults())
                 .csrf(c -> c.ignoringRequestMatchers("/h2-console/*").disable())
                 .authorizeHttpRequests(req -> req
                         .requestMatchers(HttpMethod.POST, "/api/dist/admin")
@@ -41,18 +44,24 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth")
                         .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/dept/public")
+                        .permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/dist/admin/public")
+                        .permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/auth/refresh")
                         .permitAll()
                         .requestMatchers("/api/dist/admin").hasRole("SUPER_ADMIN")
                         .requestMatchers("/api/dept").hasRole("SUPER_ADMIN")
-                        .requestMatchers("/api/dept/admin").hasAnyRole("ADMIN","SUPER_ADMIN")
+                        .requestMatchers("/api/dept/admin").hasAnyRole("ADMIN", "SUPER_ADMIN")
+                        .requestMatchers("/api/dept/admin/**").hasAnyRole("ADMIN", "SUPER_ADMIN")
                         .requestMatchers("/api/user").hasRole("USER")
-                        .requestMatchers("/api/issue").hasRole("USER")
+                        .requestMatchers("/api/issue").hasAnyRole("SUPER_ADMIN", "ADMIN", "USER")
+                        .requestMatchers("/api/issue/**").hasAnyRole("SUPER_ADMIN", "ADMIN", "USER")
                         .requestMatchers("/h2-console/**")
                         .permitAll())
                 .headers(headers -> headers
                         .frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin) // (3) All
-                        // .auow Frames
+                // .auow Frames
                 )
                 .authenticationProvider(authenticationProvider())
                 .exceptionHandling(c -> c.authenticationEntryPoint(new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))

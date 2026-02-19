@@ -22,6 +22,10 @@ import lombok.AllArgsConstructor;
 public class DepartmentController {
     private final DepartmentService service;
 
+    @GetMapping("/public")
+    public List<Department> getAllDepartments(){
+        return service.getAllDepartmentList();
+    }
     // only dist admin get their own created department by using their actual id
     @GetMapping
     public List<Department> getDeptList() {

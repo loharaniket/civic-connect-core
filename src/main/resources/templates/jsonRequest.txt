@@ -1,15 +1,180 @@
-api/dept/admin ->
+Auth:
+1) POST http://localhost:8080/api/auth
+Request: {
+    "email":"sample@gmail.com",
+    "password":"plainTextPass"
+}
+Response: return jwt token with cookie
+
+2) POST http://localhost:8080/api/auth/refresh
+Response: get cookie token and return
+
+District Admin:
+1) POST http://localhost:8080/api/dept/admin
+header: Autherization -> only district admin token accept
+Request:
 {
-    "firstName":"Raj",
-    "lastName":"Jadhav",
-    "email":"jadhavraj@gmail.com",
-    "password":"12345",
-    "distAdminId":1,
-    "deptId":1
+    "name":"name",
+    "surname": "jsurname",
+    "email": "sample@gmail.com",
+    "password": "plainTextPass",
+    "dept_id":valid_dept_id // take from this endpoint-> http://localhost:8080/api/dept/public
+}
+Response:
+{
+    "id": db_id,
+    "name":"name",
+    "surname": "jsurname",
+    "email": "sample@gmail.com",
+    "dept_id":valid_dept_id 
 }
 
-api/dept/ ->
-{
-    "dept_name":"Light Dept",
-    "dist_admin_id":1
+
+2) POST http://localhost:8080/api/dist/admin
+Request: {
+    "district":"distName",
+    "state":"stateName",
+    "name":"name",
+    "surname":"surname",
+    "password":"plainPass",
+    "email":"sample@gmail.com"
 }
+Response:
+{
+    "id":db_id,
+    "district":"distName",
+    "state":"stateName",
+    "name":"name",
+    "surname":"surname",
+    "email":"sample@gmail.com"
+}
+
+3) POST http://localhost:8080/api/dept
+header: Autherization -> only district admin token accept
+Request:
+{
+    "department":"dept name"
+}
+Response:
+{
+    "id": db_id,
+    "deptName": "dept_name",
+    "distAdminId": district_id
+}
+4) GET http://localhost:8080/api/dist/admin
+header: Autherization -> only district admin token accept
+Response:
+{
+    "id":db_id,
+    "district":"distName",
+    "state":"stateName",
+    "name":"name",
+    "surname":"surname",
+    "email":"sample@gmail.com"
+}
+5) GET http://localhost:8080/api/dept/admin/dist
+header: Autherization -> only district admin token accept
+Response: get list of all department admins
+  {
+        "name": "name",
+        "surname": "surname",
+        "email": "sample@gmail.com",
+        "dept_id": dept_id,
+        "id": db_dept_admin_id
+    }
+6) GET http://localhost:8080/api/dept
+header: Autherization -> only district admin token accept
+Response: get list of department
+[{
+        "id": 1,
+        "deptName": "Water Supply",
+        "distAdminId": 1
+    }]
+7) GET http://localhost:8080/api/issue/dist
+header: Autherization -> only district admin token accept
+Response: get list of district issue
+[
+    {
+        "id": 1,
+        "title": "Massive pothole on Main Street",
+        "description": "Large pothole causing severe traffic slowdowns and vehicle damage.",
+        "status": "OPEN",
+        "createdAt": "2026-02-18T08:30:00"
+    }
+]
+
+Department Admin
+GET http://localhost:8080/api/dept/admin
+header: Autherization -> only department admin token accept
+
+GET http://localhost:8080/api/issue/dept
+header: Autherization -> only district admin token accept
+
+
+User:
+POST http://localhost:8080/api/user
+Request:
+{
+    "name":"name",
+    "surname":"surname",
+    "email":"sample@gmail.com",
+    "password":"plainTextPass",
+    "dist_id":district_id // take from this endpoint http://localhost:8080/api/dist/admin/public 
+}
+Response:
+{
+    "id": db_id,
+    "name": "name",
+    "surname": "surname",
+    "email": "sample@gmail.com"
+}
+POST http://localhost:8080/api/issue
+header: Autherization -> only user token accept
+Request:
+{
+    "title":"title of civic issue",
+    "desc":"description of issue",
+    "department":department_id // take from this endpoint http://localhost:8080/api/dept/public
+}
+
+GET http://localhost:8080/api/user
+header: Autherization -> only user token accept
+Response:
+{
+    "id": 1,
+    "name": "Amit",
+    "surname": "Sharma",
+    "email": "amit.sharma@gmail.com"
+}
+
+GET http://localhost:8080/api/issue
+header: Autherization -> only user token accept
+Response: get list of user posted issue
+[ {
+        "id": 1,
+        "title": "Massive pothole on Main Street",
+        "description": "Large pothole causing severe traffic slowdowns and vehicle damage.",
+        "status": "OPEN",
+        "createdAt": "2026-02-18T08:30:00"
+    }]
+
+Public:
+GET http://localhost:8080/api/dept/public
+Response: list of all department
+[
+        {
+        "id": 1,
+        "deptName": "Water Supply",
+        "distAdminId": 1
+    }
+]
+
+GET http://localhost:8080/api/dist/admin/public
+Response:
+[
+    {
+        "id": 1,
+        "district": "Kolhapur",
+        "state": "Maharastra"
+    }
+]

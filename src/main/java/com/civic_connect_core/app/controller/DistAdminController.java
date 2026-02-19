@@ -1,5 +1,6 @@
 package com.civic_connect_core.app.controller;
 
+import java.util.List;
 import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminRequest;
 import com.civic_connect_core.app.dtos.dist_admin_dtos.DistAdminResponse;
+import com.civic_connect_core.app.dtos.dist_admin_dtos.DistrictPublicResponse;
 import com.civic_connect_core.app.services.DistrictAdminService;
 import com.civic_connect_core.app.validation.email_validation.EmailValidation;
 
@@ -39,6 +41,11 @@ public class DistAdminController {
             return ResponseEntity.badRequest().body(Map.of("District", "District Name Already Exist"));
         }
         return ResponseEntity.ok(service.insertDistAdmin(request));
+    }
+
+    @GetMapping("/public")
+    public List<DistrictPublicResponse> getAllDistrictList(){
+        return service.getAllDistrictList();
     }
 
 }

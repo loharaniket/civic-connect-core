@@ -19,6 +19,10 @@ public class DepartmentService {
     private final DeptMapper mapper;
     private final DistrictAdminService districtAdminService;
 
+    public List<Department> getAllDepartmentList() {
+        return repository.findAll();
+    }
+
     public List<Department> getDepartmentList() {
         DistrictAdmin admin = districtAdminService.getContextDistAdmin();
         return repository.findByDistAdminId(admin.getId());

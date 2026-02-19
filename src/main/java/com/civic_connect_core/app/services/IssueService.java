@@ -1,6 +1,7 @@
 package com.civic_connect_core.app.services;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 
@@ -18,6 +19,8 @@ public class IssueService {
     private final IssueRepo repo;
     private final IssueMapper mapper;
     private final UsersService usersService;
+    private final DeptAdminService deptAdminService;
+    private final DistrictAdminService districtAdminService;
 
     public IssueResponse postIssue(IssueRequest request) {
         var user = usersService.getUserDetail();
@@ -32,6 +35,23 @@ public class IssueService {
                 .build();
         repo.save(issue);
         return mapper.tResDTO(issue);
+    }
+
+    public List<IssueResponse> getUserIssue() {
+        var user = usersService.getUserDetail();
+        return repo.findByAutherId(user.getId()).stream().map(issue -> mapper.tResDTO(issue)).toList();
+    }
+
+    public List<IssueResponse> getDeptIssue() {
+        var deptAdmin = deptAdminService.getDepartmentAdminDetail();
+        return repo.findByDistId(deptAdmin.getDistAdminId()).stream()
+                .filter(issue -> issue.getDeptId() == deptAdmin.getDeptId())
+                .map(issue -> mapper.tResDTO(issue)).toList();
+    }
+
+    public List<IssueResponse> getDistIssue() {
+        var distAdmin = districtAdminService.getContextDistAdmin();
+        return repo.findByDistId(distAdmin.getId()).stream().map(issue -> mapper.tResDTO(issue)).toList();
     }
 
 }
