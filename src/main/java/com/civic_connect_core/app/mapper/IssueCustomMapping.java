@@ -13,7 +13,6 @@ public class IssueCustomMapping {
         Issue issue = Issue.builder()
                 .title(request.getTitle())
                 .description(request.getDescription())
-                .autherId(request.getAutherId())
                 .status("pending")
                 .deptId((long) 1)
                 .distId((long) 1)
