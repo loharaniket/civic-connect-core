@@ -1,9 +1,12 @@
 package com.civic_connect_core.app.services;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.civic_connect_core.app.dtos.issues_dtos.IssueRequest;
 import com.civic_connect_core.app.dtos.issues_dtos.IssueResponse;
@@ -12,6 +15,7 @@ import com.civic_connect_core.app.mapper.IssueMapper;
 import com.civic_connect_core.app.repository.IssueRepo;
 
 import lombok.AllArgsConstructor;
+import net.coobird.thumbnailator.Thumbnails;
 
 @Service
 @AllArgsConstructor
@@ -22,7 +26,22 @@ public class IssueService {
     private final DeptAdminService deptAdminService;
     private final DistrictAdminService districtAdminService;
 
-    public IssueResponse postIssue(IssueRequest request) {
+    // public IssueResponse postIssue(IssueRequest request) {
+    // var user = usersService.getUserDetail();
+    // Issue issue = Issue.builder()
+    // .title(request.getTitle())
+    // .description(request.getDescription())
+    // .autherId(user.getId())
+    // .distId(user.getDistId())
+    // .deptId(request.getDept_id())
+    // .status("PENDING")
+    // .createdAt(LocalDateTime.now())
+    // .build();
+    // // repo.save(issue);
+    // return mapper.tResDTO(issue);
+    // }
+
+    public IssueResponse postIssue(IssueRequest request, byte[] image) {
         var user = usersService.getUserDetail();
         Issue issue = Issue.builder()
                 .title(request.getTitle())
@@ -31,9 +50,12 @@ public class IssueService {
                 .distId(user.getDistId())
                 .deptId(request.getDept_id())
                 .status("PENDING")
+                .latitude(request.getLatitude())
+                .longitude(request.getLongitude())
+                .image(image)
                 .createdAt(LocalDateTime.now())
                 .build();
-        repo.save(issue);
+        // repo.save(issue);
         return mapper.tResDTO(issue);
     }
 
@@ -52,6 +74,16 @@ public class IssueService {
     public List<IssueResponse> getDistIssue() {
         var distAdmin = districtAdminService.getContextDistAdmin();
         return repo.findByDistId(distAdmin.getId()).stream().map(issue -> mapper.tResDTO(issue)).toList();
+    }
+
+    public byte[] compressImage(MultipartFile file) throws IOException {
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        Thumbnails.of(file.getInputStream())
+                .size(800, 800)
+                .outputQuality(0.2)
+                .outputFormat("jpg")
+                .toOutputStream(outputStream);
+        return outputStream.toByteArray();
     }
 
 }

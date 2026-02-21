@@ -5,7 +5,9 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.util.Map;
 
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -41,24 +43,27 @@ public class AuthController {
     private final SecurityContextDetail securityContextDetail;
 
     // @PostMapping
-    // public ResponseEntity<JwtResponse> login(@Valid @RequestBody AuthRequest request, HttpServletResponse response) {
-    //     System.out.println("request accept by login");
-    //     Authentication authentication = authenticationManager.authenticate(
-    //             new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+    // public ResponseEntity<JwtResponse> login(@Valid @RequestBody AuthRequest
+    // request, HttpServletResponse response) {
+    // System.out.println("request accept by login");
+    // Authentication authentication = authenticationManager.authenticate(
+    // new UsernamePasswordAuthenticationToken(request.getEmail(),
+    // request.getPassword()));
 
-    //     if (authentication.isAuthenticated()) {
-    //         UserDetails userDetails = customUserDetailService.loadUserByUsername(request.getEmail());
-    //         String accessToken = jwtService.generateAccessToken(userDetails);
-    //         String refreshToken = jwtService.generateRefreshToken(userDetails);
-    //         var cookie = new Cookie("refreshToken", refreshToken);
-    //         cookie.setHttpOnly(true);
-    //         cookie.setPath("/auth/refresh");
-    //         cookie.setMaxAge(jwtConfig.getRefreshToken());
-    //         cookie.setSecure(true);
-    //         response.addCookie(cookie);
-    //         return ResponseEntity.ok(new JwtResponse(accessToken));
-    //     }
-    //     return ResponseEntity.notFound().build();
+    // if (authentication.isAuthenticated()) {
+    // UserDetails userDetails =
+    // customUserDetailService.loadUserByUsername(request.getEmail());
+    // String accessToken = jwtService.generateAccessToken(userDetails);
+    // String refreshToken = jwtService.generateRefreshToken(userDetails);
+    // var cookie = new Cookie("refreshToken", refreshToken);
+    // cookie.setHttpOnly(true);
+    // cookie.setPath("/auth/refresh");
+    // cookie.setMaxAge(jwtConfig.getRefreshToken());
+    // cookie.setSecure(true);
+    // response.addCookie(cookie);
+    // return ResponseEntity.ok(new JwtResponse(accessToken));
+    // }
+    // return ResponseEntity.notFound().build();
     // }
 
     @PostMapping
@@ -70,13 +75,16 @@ public class AuthController {
             UserDetails userDetails = customUserDetailService.loadUserByUsername(request.getEmail());
             String accessToken = jwtService.generateAccessToken(userDetails);
             String refreshToken = jwtService.generateRefreshToken(userDetails);
-            var cookie = new Cookie("refreshToken", refreshToken);
-            cookie.setHttpOnly(true);
-            cookie.setPath("/auth/refresh");
-            cookie.setMaxAge(jwtConfig.getRefreshToken());
-            cookie.setSecure(true);
-            response.addCookie(cookie);
-            return ResponseEntity.ok().body(Map.of("token",accessToken,"refreshToken",refreshToken));
+            ResponseCookie cookie = ResponseCookie.from("refreshToken", refreshToken)
+                    .httpOnly(true)
+                    .secure(false) // local
+                    .path("/")
+                    .sameSite("Lax") // important
+                    .maxAge(jwtConfig.getRefreshToken())
+                    .build();
+
+            response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+            return ResponseEntity.ok().body(Map.of("token", accessToken, "refreshToken", refreshToken));
         }
         return ResponseEntity.notFound().build();
     }
@@ -95,10 +103,10 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public UserDetails getCurrentUser() {
+    public ResponseEntity<?> getCurrentUser() {
         String email = securityContextDetail.getEmailFromContext();
         var user = customUserDetailService.loadUserByUsername(email);
-        return user;
+        return ResponseEntity.ok().body(Map.of("Role", user.getAuthorities()));
     }
 
     @ExceptionHandler(BadCredentialsException.class)

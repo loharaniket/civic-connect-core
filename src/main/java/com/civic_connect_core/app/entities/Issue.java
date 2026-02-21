@@ -25,6 +25,9 @@ public class Issue {
     private String title;
     private String description;
     private Long autherId;
+    private Double latitude;
+    private Double longitude;
+    private byte[] image;
     private String status;
     private Long deptId;
     private Long distId;
