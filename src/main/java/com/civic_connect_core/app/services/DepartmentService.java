@@ -39,4 +39,9 @@ public class DepartmentService {
         repository.save(dept);
         return dept;
     }
+
+    public String getDeptName(Long id) {
+        var dept = repository.findById(id).orElseThrow();
+        return dept.getDeptName();
+    }
 }

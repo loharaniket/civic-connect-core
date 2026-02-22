@@ -22,14 +22,14 @@ public class IssueRequest {
     @DecimalMax(value = "90.0", message = "Latitude must be between -90 and 90")
     @JsonProperty("lat")
     private Double latitude;
-    
+
     @NotNull(message = "Longitude is required")
     @DecimalMin(value = "-180.0", message = "Longitude must be between -180 and 180")
     @DecimalMax(value = "180.0", message = "Longitude must be between -180 and 180")
     @JsonProperty("long")
     private Double longitude;
 
-    @NotNull
+    @NotNull(message = "department is required")
     @JsonProperty("department")
     private Long dept_id;
 }

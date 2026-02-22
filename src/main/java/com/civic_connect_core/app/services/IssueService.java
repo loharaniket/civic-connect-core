@@ -25,6 +25,7 @@ public class IssueService {
     private final UsersService usersService;
     private final DeptAdminService deptAdminService;
     private final DistrictAdminService districtAdminService;
+    private final DepartmentService deptService;
 
     // public IssueResponse postIssue(IssueRequest request) {
     // var user = usersService.getUserDetail();
@@ -55,25 +56,40 @@ public class IssueService {
                 .image(image)
                 .createdAt(LocalDateTime.now())
                 .build();
-        // repo.save(issue);
-        return mapper.tResDTO(issue);
+        repo.save(issue);
+
+        return getIssueResponse(issue);
+    }
+
+    private IssueResponse getIssueResponse(Issue issue) {
+        return IssueResponse.builder()
+                .id(issue.getId())
+                .title(issue.getTitle())
+                .description(issue.getDescription())
+                .status(issue.getStatus())
+                .latitude(issue.getLatitude())
+                .longitude(issue.getLongitude())
+                .imageLocation("http://localhost:8080/api/issue/image/" + issue.getId())
+                .department(deptService.getDeptName(issue.getDeptId()))
+                .createdAt(issue.getCreatedAt())
+                .build();
     }
 
     public List<IssueResponse> getUserIssue() {
         var user = usersService.getUserDetail();
-        return repo.findByAutherId(user.getId()).stream().map(issue -> mapper.tResDTO(issue)).toList();
+        return repo.findByAutherId(user.getId()).stream().map(issue -> getIssueResponse(issue)).toList();
     }
 
     public List<IssueResponse> getDeptIssue() {
         var deptAdmin = deptAdminService.getDepartmentAdminDetail();
         return repo.findByDistId(deptAdmin.getDistAdminId()).stream()
                 .filter(issue -> issue.getDeptId() == deptAdmin.getDeptId())
-                .map(issue -> mapper.tResDTO(issue)).toList();
+                .map(issue -> getIssueResponse(issue)).toList();
     }
 
     public List<IssueResponse> getDistIssue() {
         var distAdmin = districtAdminService.getContextDistAdmin();
-        return repo.findByDistId(distAdmin.getId()).stream().map(issue -> mapper.tResDTO(issue)).toList();
+        return repo.findByDistId(distAdmin.getId()).stream().map(issue -> getIssueResponse(issue)).toList();
     }
 
     public byte[] compressImage(MultipartFile file) throws IOException {
@@ -84,6 +100,11 @@ public class IssueService {
                 .outputFormat("jpg")
                 .toOutputStream(outputStream);
         return outputStream.toByteArray();
+    }
+
+    public byte[] getImage(Long id) {
+        var issue = repo.findById(id).orElseThrow();
+        return issue.getImage();
     }
 
 }

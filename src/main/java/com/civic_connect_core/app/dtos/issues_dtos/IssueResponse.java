@@ -4,10 +4,13 @@ import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
+import lombok.Builder;
 import lombok.Data;
 
 @Data
-@JsonPropertyOrder({ "id", "title", "description", "status", "latitude", "longitude", "image", "createdAt" })
+@Builder
+@JsonPropertyOrder({ "id", "title", "description", "status", "latitude", "longitude", "image", "department",
+        "createdAt" })
 public class IssueResponse {
     private Long id;
     private String title;
@@ -15,6 +18,7 @@ public class IssueResponse {
     private String status;
     private Double latitude;
     private Double longitude;
-    private byte[] image;
+    private String imageLocation;
+    private String department;
     private LocalDateTime createdAt;
 }
