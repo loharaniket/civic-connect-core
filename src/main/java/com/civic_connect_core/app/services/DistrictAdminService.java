@@ -37,13 +37,18 @@ public class DistrictAdminService {
         return distAdminRepo.findByDistName(district.toUpperCase()).isPresent();
     }
 
+    public DistrictAdmin getAdminById(Long id) {
+        return distAdminRepo.findById(id).orElseThrow(
+                () -> new UsernameNotFoundException("District Admin Not Found getAdminById -> DistrictAdminServise"));
+    }
+
     public boolean isDistIdPresent(Long id) {
         return distAdminRepo.findById(id).isPresent();
     }
 
     public DistrictAdmin getContextDistAdmin() {
         String admin = contextDetail.getEmailFromContext();
-        return distAdminRepo.findByAdminEmail(admin).orElseThrow(()-> new UsernameNotFoundException(admin));
+        return distAdminRepo.findByAdminEmail(admin).orElseThrow(() -> new UsernameNotFoundException(admin));
     }
 
     public DistAdminResponse insertDistAdmin(DistAdminRequest request) {

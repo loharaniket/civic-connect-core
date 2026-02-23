@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.Data;
 
 @Data
-@JsonPropertyOrder({"id","userName","userSurname","userEmail"})
+@JsonPropertyOrder({ "id", "userName", "userSurname", "userEmail", "district" })
 public class UserResponse {
     private Long id;
     @JsonProperty("name")
@@ -15,4 +15,7 @@ public class UserResponse {
     private String userSurname;
     @JsonProperty("email")
     private String userEmail;
+    @JsonProperty("district")
+    private Long distId;
+
 }

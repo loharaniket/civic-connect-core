@@ -51,4 +51,5 @@ public class DeptAdminService {
         return repository.findByDistAdminId(distAdmin.getId()).stream().map(admin -> mapper.tResDTO(admin)).toList();
     }
 
+
 }

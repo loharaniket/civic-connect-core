@@ -1,5 +1,6 @@
 package com.civic_connect_core.app.services;
 
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -32,6 +33,12 @@ public class UsersService {
         var user = repository.findByUserEmail(email).orElseThrow();
         return user;
 
+    }
+
+    public UserResponse getUserDetailById(Long id) {
+        var user = repository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("User Not Found at getUserDetailsById UsersService"));
+        return mapper.tUserResDTO(user);
     }
 
     public UserResponse getUserProfile() {

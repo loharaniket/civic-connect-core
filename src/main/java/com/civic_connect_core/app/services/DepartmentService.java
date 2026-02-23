@@ -28,6 +28,10 @@ public class DepartmentService {
         return repository.findByDistAdminId(admin.getId());
     }
 
+    public List<Department> getDeptByDistAdmin(Long id) {
+        return repository.findByDistAdminId(id);
+    }
+
     public boolean isDepartmentIdPresent(Long id) {
         return repository.findById(id).isPresent();
     }

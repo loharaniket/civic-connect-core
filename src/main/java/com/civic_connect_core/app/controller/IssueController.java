@@ -8,15 +8,19 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.civic_connect_core.app.dtos.issues_dtos.DistIssueResponse;
 import com.civic_connect_core.app.dtos.issues_dtos.IssueRequest;
 import com.civic_connect_core.app.dtos.issues_dtos.IssueResponse;
+import com.civic_connect_core.app.dtos.issues_dtos.UpdateIssueStatus;
 import com.civic_connect_core.app.services.DepartmentService;
 import com.civic_connect_core.app.services.IssueService;
 
@@ -29,16 +33,6 @@ import lombok.AllArgsConstructor;
 public class IssueController {
     private final IssueService service;
     private final DepartmentService departmentService;
-
-    // @PostMapping
-    // public ResponseEntity<?> postIssue(@RequestBody IssueRequest request) {
-    // System.out.println(request.getDept_id());
-    // if (!departmentService.isDepartmentIdPresent(request.getDept_id())) {
-    // return ResponseEntity.badRequest().body(Map.of("Department", "Invalid
-    // Department Id"));
-    // }
-    // return ResponseEntity.ok(service.postIssue(request));
-    // }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> postIssue(
@@ -90,12 +84,25 @@ public class IssueController {
     }
 
     @GetMapping("/dept")
-    public List<IssueResponse> getDeptIssue() {
+    public List<DistIssueResponse> getDeptIssue() {
         return service.getDeptIssue();
     }
 
     @GetMapping("/dist")
-    public List<IssueResponse> getDistIssue() {
+    public List<DistIssueResponse> getDistIssue() {
         return service.getDistIssue();
     }
+
+    @PutMapping("/update")
+    public ResponseEntity<?> updateIssueStatus(@RequestBody UpdateIssueStatus request) {
+        service.updateIssueStatus(request.getIssueId(), request.getStatus());
+        return ResponseEntity.ok().build();
+    }
+    
+    @PutMapping("/update/open/{id}")
+    public ResponseEntity<?> udpateOpenIssue(@PathVariable Long id) {
+        service.openIssueUpdate(id);
+        return ResponseEntity.ok().build();
+    }
+    
 }
