@@ -32,6 +32,7 @@ public class IssueService {
     private final DepartmentService deptService;
     private final HostConfig hostConfig;
 
+//issue post
     public IssueResponse postIssue(IssueRequest request, byte[] image) {
         var user = usersService.getUserDetail();
         Issue issue = Issue.builder()
