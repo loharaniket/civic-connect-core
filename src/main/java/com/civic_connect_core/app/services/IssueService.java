@@ -59,7 +59,7 @@ public class IssueService {
                 .status(issue.getStatus())
                 .latitude(issue.getLatitude())
                 .longitude(issue.getLongitude())
-                .imageLocation(hostConfig.getServer()+"/api/issue/image/" + issue.getId())
+                .imageLocation(hostConfig.getServer() + "/api/issue/image/" + issue.getId())
                 .department(deptService.getDeptName(issue.getDeptId()))
                 .createdAt(issue.getCreatedAt())
                 .build();
@@ -88,7 +88,7 @@ public class IssueService {
                 .status(issue.getStatus())
                 .latitude(issue.getLatitude())
                 .longitude(issue.getLongitude())
-                .imageLocation(hostConfig.getServer()+"/api/issue/image/" + issue.getId())
+                .imageLocation(hostConfig.getServer() + "/api/issue/image/" + issue.getId())
                 .department(deptService.getDeptName(issue.getDeptId()))
                 .createdAt(issue.getCreatedAt())
                 .build();
@@ -117,6 +117,10 @@ public class IssueService {
     public void updateIssueStatus(Long id, String status) {
         var issue = repo.findById(id).orElseThrow(
                 () -> new UsernameNotFoundException("Issue Id not Found updateIssueStatus() -> IssueService"));
+        if (status.equals(IssueStatus.CLOSED.name())) {
+            issue.setLatitude(null);
+            issue.setLongitude(null);
+        }
         issue.setStatus(status);
         repo.save(issue);
     }
