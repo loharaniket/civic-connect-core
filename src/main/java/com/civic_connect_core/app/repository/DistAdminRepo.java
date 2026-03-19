@@ -17,4 +17,6 @@ public interface DistAdminRepo extends JpaRepository<DistrictAdmin, Long> {
     Optional<DistrictAdmin> findByDistName(String distName);
 
     boolean existsByAdminEmail(String adminEmail);
+
+    boolean existsByDistName(String district);
 }

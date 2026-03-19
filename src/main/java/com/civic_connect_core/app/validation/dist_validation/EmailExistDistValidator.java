@@ -1,7 +1,5 @@
 package com.civic_connect_core.app.validation.dist_validation;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.civic_connect_core.app.repository.DistAdminRepo;
 
 import jakarta.validation.ConstraintValidator;
@@ -12,7 +10,6 @@ import lombok.Data;
 @AllArgsConstructor
 @Data
 public class EmailExistDistValidator implements ConstraintValidator<EmailExistDistValidation, String> {
-    @Autowired
     private final DistAdminRepo distAdminRepo;
 
     @Override

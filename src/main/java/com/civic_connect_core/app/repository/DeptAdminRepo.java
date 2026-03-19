@@ -11,4 +11,6 @@ public interface DeptAdminRepo extends JpaRepository<DepartmentAdmin, Long> {
     List<DepartmentAdmin> findByDistAdminId(Long distAdminId);
 
     Optional<DepartmentAdmin> findByEmail(String email);
+
+    boolean existsByEmail(String email);
 }

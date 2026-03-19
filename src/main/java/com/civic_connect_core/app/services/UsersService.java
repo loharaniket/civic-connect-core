@@ -30,7 +30,7 @@ public class UsersService {
 
     public Users getUserDetail() {
         String email = context.getEmailFromContext();
-        var user = repository.findByUserEmail(email).orElseThrow();
+        var user = repository.findByUserEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found for this email"));
         return user;
 
     }

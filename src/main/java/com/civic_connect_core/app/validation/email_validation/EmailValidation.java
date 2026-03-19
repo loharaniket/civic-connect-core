@@ -15,11 +15,14 @@ public class EmailValidation {
     private final DeptAdminRepo deptAdminRepo;
     private final UsersRepo usersRepo;
 
+    // public boolean isEmailExist(String email) {
+    // boolean distAdmin = distAdminRepo.findByAdminEmail(email).isPresent();
+    // boolean deptAdmin = deptAdminRepo.findByEmail(email).isPresent();
+    // boolean user = usersRepo.findByUserEmail(email).isPresent();
+    // return distAdmin || deptAdmin || user;
+    // }
     public boolean isEmailExist(String email) {
-        boolean distAdmin = distAdminRepo.findByAdminEmail(email).isPresent();
-        boolean deptAdmin = deptAdminRepo.findByEmail(email).isPresent();
-        boolean user = usersRepo.findByUserEmail(email).isPresent();
-        return distAdmin || deptAdmin || user;
+        return distAdminRepo.existsByAdminEmail(email) || deptAdminRepo.existsByEmail(email)
+                || usersRepo.existsByUserEmail(email);
     }
-
 }
