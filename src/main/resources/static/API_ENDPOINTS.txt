@@ -1,0 +1,26 @@
+requirestMapping -> api/v1/
+AUTH :-  
+1) auth/login -> POST -> this endpoint for login Role("SUPER_ADMIN","DEPT_ADMIN","CITIZEN")
+2) auth/register -> POST -> only citizen register Role("CITIZEN")
+
+Users:
+1) users/me -> GET -> get profile user
+2) users/me -> PATCH -> update profile
+3) users/password -> PATCH -> update password
+4) users -> GET -> get all users (Admin) sort
+5) users/{id} -> GET ->  (Admin) get full detail of user
+6) users/{id} -> DELETE -> delete existing user account
+
+Department:
+1) departments -> POST -> (Admin) add new department
+2) departments -> DELETE -> (Admin) delete department
+3) departments/{id}/admin -> POST -> (Admin) assign department to new admin
+4) departments/{id}/admin -> GET -> (Admin) view full assign admin
+
+
+COMPLAINTS:
+1) complaint/post -> POST -> citizen post complaint
+2) complaint/citizen -> GET -> get by citizen (pagination)
+3) complaint/department -> GET -> get by department (pagination)
+4) complaint/all -> GET -> filters (getByCitizen, getByDepartment) (pagination) (param)
+5) complaint -> UPDATE -> update only status
