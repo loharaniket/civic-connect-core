@@ -28,6 +28,7 @@ public class SecurityConfig {
                         // .requestMatchers("/api/v1/users/me").permitAll()
                         .requestMatchers("/api/v1/users/me").hasAnyRole("SUPER_ADMIN", "DEPT_ADMIN", "CITIZEN")
                         .requestMatchers("/api/v1/users/**").hasAnyRole("SUPER_ADMIN")
+                        .requestMatchers("/api/v1/department/**").hasAnyRole("SUPER_ADMIN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

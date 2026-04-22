@@ -6,7 +6,7 @@ AUTH :-
 Users:
 1) users/me -> GET -> get profile user
 2) users/me -> PATCH -> update profile
-3) users/password -> PATCH -> update password
+3) users/password -> PATCH -> update password (not impl)
 4) users -> GET -> get all users (Admin) sort
 5) users/{id} -> GET ->  (Admin) get full detail of user
 6) users/{id} -> DELETE -> delete existing user account
