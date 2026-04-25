@@ -5,12 +5,12 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.civic_connect_core.app.dtos.request.SaveUserProfileRequest;
-import com.civic_connect_core.app.dtos.response.GetUserProfileResponse;
 import com.civic_connect_core.app.entity.UserProfile;
 import com.civic_connect_core.app.entity.Users;
 import com.civic_connect_core.app.exceptions.UserNotFoundException;
 import com.civic_connect_core.app.repository.UserProfileRepository;
 import com.civic_connect_core.app.repository.UsersRepository;
+import com.civic_connect_core.app.utils.SecurityContextDetails;
 
 import lombok.AllArgsConstructor;
 
@@ -29,8 +29,8 @@ public class UserProfileService {
         return userProfileRepository.findByUsers(user).orElse(new UserProfile());
     }
 
-    public UserProfile saveProfile(SaveUserProfileRequest request) {
-        var user = getUser(request.getUserId());
+    public UserProfile saveProfile(SaveUserProfileRequest request, Long userId) {
+        var user = getUser(userId);
         var existingProfile = getProfile(user);
         existingProfile.setFirstName(request.getFirstName());
         existingProfile.setLastName(request.getLastName());
@@ -48,22 +48,17 @@ public class UserProfileService {
 
     public List<UserProfile> getAllUserProfiles() {
         List<UserProfile> userList = userProfileRepository.findAll();
+        for (UserProfile user : userList) {
+            if (user.getUsers().getUserId() == SecurityContextDetails.getUserContextId()) {
+                userList.remove(user);
+            }
+        }
         return userList;
     }
 
-    // public GetUserProfileResponse getUserProfile(Long userId) {
-    // var user = getUser(userId);
-    // var profile = getProfile(user);
-    // var response = GetUserProfileResponse.builder()
-    // .profileId(profile.getProfileId())
-    // .userId(userId)
-    // .firstName(profile.getFirstName())
-    // .lastName(profile.getLastName())
-    // .age(profile.getAge())
-    // .address(profile.getAddress())
-    // .userEmail(user.getUserEmail())
-    // .build();
-    // return response;
-    // }
+    public void deleteUserById(Long id) {
+        var user = getUser(id);
+        usersRepository.delete(user);
+    }
 
 }

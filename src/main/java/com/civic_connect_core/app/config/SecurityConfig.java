@@ -2,6 +2,7 @@ package com.civic_connect_core.app.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
@@ -25,10 +26,12 @@ public class SecurityConfig {
         return http.csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth.requestMatchers("/api/v1/auth/**").permitAll()
-                        // .requestMatchers("/api/v1/users/me").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
                         .requestMatchers("/api/v1/users/me").hasAnyRole("SUPER_ADMIN", "DEPT_ADMIN", "CITIZEN")
                         .requestMatchers("/api/v1/users/**").hasAnyRole("SUPER_ADMIN")
                         .requestMatchers("/api/v1/department/**").hasAnyRole("SUPER_ADMIN")
+                        .requestMatchers(HttpMethod.PUT,"/api/v1/complaints/**").hasAnyRole("SUPER_ADMIN", "DEPT_ADMIN")
+                        .requestMatchers("/api/v1/complaints/**").hasAnyRole("SUPER_ADMIN", "DEPT_ADMIN", "CITIZEN")
                         .anyRequest().authenticated())
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();

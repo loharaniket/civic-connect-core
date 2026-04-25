@@ -1,26 +1,24 @@
-requirestMapping -> api/v1/
-AUTH :-  
-1) auth/login -> POST -> this endpoint for login Role("SUPER_ADMIN","DEPT_ADMIN","CITIZEN")
-2) auth/register -> POST -> only citizen register Role("CITIZEN")
+Civic Issue Revolution System API Detail
+Auth :-  
+1) /api/v1/auth/login [POST] -> this endpoint for login Role("SUPER_ADMIN","DEPT_ADMIN","CITIZEN")
+2) /api/v1/auth/register [POST] -> only citizen register Role("CITIZEN")
 
 Users:
-1) users/me -> GET -> get profile user
-2) users/me -> PATCH -> update profile
-3) users/password -> PATCH -> update password (not impl)
-4) users -> GET -> get all users (Admin) sort
-5) users/{id} -> GET ->  (Admin) get full detail of user
-6) users/{id} -> DELETE -> delete existing user account
+1) /api/v1/users/me [GET] -> get profile user Role("SUPER_ADMIN","DEPT_ADMIN","CITIZEN")
+2) /api/v1/users/me [POST]-> update profile Role("SUPER_ADMIN","DEPT_ADMIN","CITIZEN")
+4) /api/v1/users [GET] -> get all users Role("SUPER_ADMIN")
+5) /api/v1/users/{id} [GET] ->  get full detail of user Role("SUPER_ADMIN")
+6) /api/v1/users/{id} [DELETE] -> delete existing user account Role("SUPER_ADMIN")
 
-Department:
-1) departments -> POST -> (Admin) add new department
-2) departments -> DELETE -> (Admin) delete department
-3) departments/{id}/admin -> POST -> (Admin) assign department to new admin
-4) departments/{id}/admin -> GET -> (Admin) view full assign admin
+
+Department
+1) /api/v1/department - GET -> Get All Department List with Assign Admin user data Role("SUPER_ADMIN")
+2) /api/v1/department/not_assign [GET] -> Get Department that not assign any dept admin Role("SUPER_ADMIN")
+3) /api/v1/department [POST] -> add new department Role("SUPER_ADMIN")
+4) /api/v1/department/{id}/admin/{userId} [POST] ->  assign admin to department Role("SUPER_ADMIN")
 
 
 COMPLAINTS:
-1) complaint/post -> POST -> citizen post complaint
-2) complaint/citizen -> GET -> get by citizen (pagination)
-3) complaint/department -> GET -> get by department (pagination)
-4) complaint/all -> GET -> filters (getByCitizen, getByDepartment) (pagination) (param)
-5) complaint -> UPDATE -> update only status
+1) /api/v1/complaints [POST] -> Post New Complaints (CITIZEN)
+2) /api/v1/complaints [GET] -> Get Complaints List ("SUPER_ADMIN","DEPT_ADMIN","CITIZEN")
+3) /api/v1/complaints [PUT] -> Update Complaint Status ("SUPER_ADMIN","DEPT_ADMIN")

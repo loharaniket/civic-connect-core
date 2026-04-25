@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 
 import com.civic_connect_core.app.entity.Users;
 
+
 @Repository
 public interface UsersRepository extends JpaRepository<Users, Long> {
     boolean existsByUserEmail(String userEmail);
@@ -14,4 +15,6 @@ public interface UsersRepository extends JpaRepository<Users, Long> {
     boolean existsByUserId(Long userId);
 
     Optional<Users> findByUserId(Long userId);
+
+    Optional<Users> findByUserEmail(String userEmail);
 }
